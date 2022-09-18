@@ -1,0 +1,140 @@
+body {
+    background-color: #EFEFEF;
+    font-family: Georgia, Helvetica, Arial, FreeSans, "Liberation Sans", "ヒラギノ角ゴ ProN W3", "HiraKakuProN-W3", "メイリオ", Meiryo, Arial sans-serif;
+    margin: 5px;
+    padding: 10px 0px 5px 10px;
+    font-size: 16px;
+}
+
+
+
+
+.title {
+    font-family: "Georgia";
+    font-size: 23px;
+    text-align: left;
+    padding: 8px 0px 0px 5px;
+
+}
+
+.about {
+    font-family: "Georgia";
+    font-size: 18px;
+    text-align: left;
+    padding: 5px 0px 0px 30px;
+
+}
+
+header {
+    z-index: 2;
+    height: 5px;
+    position: absolute;
+    top: 10px;
+    width: 95%;
+    text-align: right;
+    z-index: 2;
+}
+
+#header .search input {
+
+    background-color: #fefefe;
+    border: 1px solid #999;
+    padding: 2px 0 0 2px;
+    height: 20px;
+    font-size: 1.2rem;
+    width: 200px;
+}
+
+#header input.btn {
+    margin-top: 0;
+    margin-left: 2px;
+    width: 80px;
+    font-size: 1.2rem;
+    border-radius: 2px;
+    padding: 3px 10px;
+    height: 24px;
+    color: #fff;
+    background-color: #024b96;
+    border: none;
+    cursor: pointer;
+    float: right;
+}
+
+
+#menu {
+    position: relative;
+    top: 10px;
+    height: 28px;
+    border-bottom: solid 3px #045a97;
+    clear: left;
+}
+
+#menu a {
+    display: block;
+    width: 130px;
+    font-size: 1.3rem;
+    line-height: 0.8;
+    text-align: center;
+    padding-top: 4px;
+    padding-bottom: 2px;
+    float: left;
+    text-decoration: none;
+    border-left: solid 1px #17b8e4;
+    border-right: solid 1px #17b8e4;
+    color: #020005;
+    transition: all .2s;
+}
+
+#menu a:hover {
+    color: #ffffff;
+    background-color: #01a2ff;
+    /* border-left: solid 1px #ee0d2f; */
+}
+
+
+p.text_left {
+    text-align: left;
+    padding: 5px 0px 0px 0px;
+}
+
+#myDiv {
+    position: relative;
+    left: 150px;
+}
+
+#myDiv2 {
+    position: relative;
+    left: 150px;
+}
+
+.fig2 {
+    display: flex;
+    position: relative;
+    left: 20px;
+}
+
+#myDiv_ngs {
+    position: relative;
+    left: 150px;
+}
+
+.class1 {
+    position: auto;
+    top: 50px;
+    left: 150px;
+}
+
+
+footer {
+    position: relative;
+    height: 20px;
+    margin: 0 15px 0 20px;
+    padding: 30px 0px 0px 0px;
+    text-align: left;
+    background-color: #EFEFEF;
+    min-width: 1120px;
+}
+
+footer a {
+    color: #488EC4;
+}
