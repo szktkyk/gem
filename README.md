@@ -1,11 +1,11 @@
 # GEM: Genome Editing Meta-database ver1
 GEM is the subset of genome editing related metadata from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
-    - PubMed
-    - PubMed Central
-    - NCBI gene
-    - PubTator Central
-    - MeSH
-    - NCBI taxonomy
+- PubMed
+- PubMed Central
+- NCBI gene
+- PubTator Central
+- MeSH
+- NCBI taxonomy
 
 ## Usage
 1. Run the scripts from W01 to W07 in modules directory.
