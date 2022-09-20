@@ -50,9 +50,15 @@ title_right_html = html.Div(
             "last updated: 2022-Sep-17",
             style={"fontSize": 20, "textAlign": "right"},
         ),
+        html.A("About/How to use", href="/assets/about.html", target="_blank"),
+        html.P(""),
         html.A("News", href="/assets/news.html", target="_blank"),
         html.P(""),
-        html.A("bonohulab", href="https://bonohu.hiroshima-u.ac.jp/", target="_blank"),
+        html.A(
+            "Bonohulab/Contact",
+            href="https://bonohu.hiroshima-u.ac.jp/index_en.html",
+            target="_blank",
+        ),
     ],
     style={
         "width": "45%",
@@ -276,6 +282,12 @@ license = html.Div(
         html.Img(src="/assets/cc_by.png"),
         html.P(
             "This work is licensed under a Creative Commons Attribution 4.0 International License.",
+            style={"fontSize": 20, "textAlign": "left"},
+        ),
+        html.A(
+            "Contact us at bonohulab for any feedbacks",
+            href="https://bonohu.hiroshima-u.ac.jp/index_en.html",
+            target="_blank",
             style={"fontSize": 20, "textAlign": "left"},
         ),
     ],
