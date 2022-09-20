@@ -158,7 +158,7 @@ def parse_callback_json_fig2(selectedData, DATABASE):
     json_content = selectedData["points"][0]
     taxno = json_content["curveNumber"]
     row = df_tax[df_tax["taxid"] == int(taxno)]
-    print(row)
+    # print(row)
     specie = row["organism_name"].values[0]
     tool = json_content["x"]
     con = sqlite3.connect(DATABASE)
