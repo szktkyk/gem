@@ -37,6 +37,19 @@ def main():
     print(mesh_list)
     print(len(mesh_list))
 
+    # Make a directory if not exist
+    # new_dir_path = f"../data/{date}"
+    # if not os.path.isdir(new_dir_path):
+    #     os.mkdir(new_dir_path)
+
+    # with open(
+    #     f"../data/{date}/{date}_pubdetails.csv",
+    #     "w",
+    # ) as csvfile:
+    #     writer = csv.DictWriter(csvfile, fieldnames=field_name)
+    #     writer.writeheader()
+    #     writer.writerows(pmids_metadata)
+
 
 def get_pmids(term: str) -> list:
     """
@@ -129,6 +142,43 @@ def get_pubdetails(pmids: list, max_len: int) -> list:
 
         for element in tree2.iter("PubmedArticle"):
 
+            # pmid = get_text_by_tree("./MedlineCitation/PMID", element)
+
+            # doiid = get_text_by_tree(
+            #     "./PubmedData/ArticleIdList/ArticleId[@IdType='doi']",
+            #     element,
+            # )
+            # pmcid = get_text_by_tree(
+            #     "./PubmedData/ArticleIdList/ArticleId[@IdType='pmc']",
+            #     element,
+            # )
+            # if pmcid == "":
+            #     pmcid = "Not found"
+
+            # title = get_text_by_tree("./MedlineCitation/Article/ArticleTitle", element)
+            # try:
+            #     pubdate_year = element.find(
+            #         "./MedlineCitation/Article/ArticleDate/Year"
+            #     ).text
+            #     pubdate_month = element.find(
+            #         "./MedlineCitation/Article/ArticleDate/Month"
+            #     ).text
+            #     pubdate_day = element.find(
+            #         "./MedlineCitation/Article/ArticleDate/Day"
+            #     ).text
+            # except:
+            #     pubdate_year = element.find(
+            #         "./PubmedData/History/PubMedPubDate/Year"
+            #     ).text
+            #     pubdate_month = element.find(
+            #         "./PubmedData/History/PubMedPubDate/Month"
+            #     ).text
+            #     pubdate_day = element.find(
+            #         "./PubmedData/History/PubMedPubDate/Day"
+            #     ).text
+
+            # pubdate = "{}-{}-{}".format(pubdate_year, pubdate_month, pubdate_day)
+
             mesh_elements = element.findall(
                 "./MedlineCitation/MeshHeadingList/MeshHeading"
             )
@@ -144,6 +194,21 @@ def get_pubdetails(pmids: list, max_len: int) -> list:
                     mesh_list.append(element.text)
             except:
                 continue
+
+            # substances = element.findall(
+            #     "MedlineCitation/ChemicalList/Chemical/NameOfSubstance"
+            # )
+            # for substance in substances:
+            #     mesh_list.append(substance.text)
+
+            # keywords = []
+            # keywordlist = element.findall("MedlineCitation/KeywordList/Keyword")
+            # for keyword in keywordlist:
+            #     keywords.append(keyword.text)
+
+            # abstract = get_text_by_tree(
+            #     "./MedlineCitation/Article/Abstract/AbstractText", element
+            # )
 
         mesh_list = list(set(mesh_list))
         print(mesh_list)
