@@ -153,13 +153,32 @@ def parse_callback_json_fig1(selectedData, DATABASE):
     return df
 
 
-def parse_callback_json_fig2(selectedData, DATABASE):
-    df_tax = pd.read_csv("./tax_list_dash.csv")
+def parse_callback_json_fig2_left(selectedData, DATABASE):
+    df_fig3s = pd.read_csv("./tax_list_fig3s.csv")
     json_content = selectedData["points"][0]
     taxno = json_content["curveNumber"]
-    row = df_tax[df_tax["taxid"] == int(taxno)]
+    row = df_fig3s[df_fig3s.iloc[:,0] == int(taxno)]
     # print(row)
-    specie = row["organism_name"].values[0]
+    specie = row["species"].values[0]
+    tool = json_content["x"]
+    con = sqlite3.connect(DATABASE)
+    sql_query = pd.read_sql_query(
+        "select * from GEM_metadata where organism_name = '{}' and getool = '{}'".format(
+            specie, tool
+        ),
+        con,
+    )
+    df = pd.DataFrame(sql_query)
+    con.close()
+    return df
+
+def parse_callback_json_fig2_right(selectedData, DATABASE):
+    df_fig2s = pd.read_csv("./tax_list_fig2s.csv")
+    json_content = selectedData["points"][0]
+    taxno = json_content["curveNumber"]
+    row = df_fig2s[df_fig2s.iloc[:,0] == int(taxno)]
+    # print(row)
+    specie = row["species"].values[0]
     tool = json_content["x"]
     con = sqlite3.connect(DATABASE)
     sql_query = pd.read_sql_query(

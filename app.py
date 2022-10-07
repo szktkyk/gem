@@ -81,6 +81,9 @@ df2 = pd.DataFrame(
     data=list2,
     columns=["genome editing tools", "species", "the number of genes studied"],
 )
+df2s = df2.sort_values("the number of genes studied",ascending=False)
+df2s = df2s.reset_index()
+df2s.to_csv("tax_list_fig2s.csv",columns=['species'],index=True)
 
 
 list3 = data_for_fig2_left(DATABASE)
@@ -88,6 +91,9 @@ df3 = pd.DataFrame(
     data=list3,
     columns=["genome editing tools", "species", "the number of genes studied"],
 )
+df3s = df3.sort_values("the number of genes studied",ascending=False)
+df3s = df3s.reset_index()
+df3s.to_csv("tax_list_fig3s.csv",columns=['species'],index=True)
 
 list4 = data_for_fig4(DATABASE)
 df_fig4 = pd.DataFrame(
@@ -96,7 +102,8 @@ df_fig4 = pd.DataFrame(
 )
 
 
-df4 = pd.read_csv("20220917_ge_metadata2.csv")
+df4 = pd.read_csv("20220917_ge_metadata.csv")
+df4 = df4.rename(columns={"getool":"Genome Editing Tool", "pmid":"PubMed ID", "pubtitle":"Publication Title", "pubdate":"Published Date", "organism_name":"Organism Name", "genesymbol":"GeneSymbol", "editing_type":"Editing Type", "gene_counts":"How much the Gene Studied", "biopro_id":"BioProject ID", "RNA_seq":"RNA-seq ID (GEO)", "vector":"Used Vector", "cellline":"Cell line", "tissue":"Tissue type", "Mutation_type":"Mutation Type"})
 
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/dWLwgP.css"]
@@ -187,7 +194,7 @@ second_left_fig = html.Div(
         dcc.Graph(
             id="fig2_left",
             figure=px.bar(
-                df3,
+                df3s,
                 x="genome editing tools",
                 y="the number of genes studied",
                 color="species",
@@ -210,7 +217,7 @@ second_right_fig = html.Div(
         dcc.Graph(
             id="fig2_right",
             figure=px.bar(
-                df2,
+                df2s,
                 x="genome editing tools",
                 y="the number of genes studied",
                 color="species",
@@ -353,7 +360,7 @@ def CreateTableFig4(selectedData):
 )
 def CreateTableFig2Left(selectedData):
     if selectedData:
-        df_selected_fig2 = parse_callback_json_fig2(selectedData, DATABASE)
+        df_selected_fig2 = parse_callback_json_fig2_left(selectedData, DATABASE)
         table_selected_fig2_left = selected_table(df_selected_fig2)
         return table_selected_fig2_left
     else:
@@ -367,7 +374,7 @@ def CreateTableFig2Left(selectedData):
 )
 def CreateTableFig2Left(selectedData):
     if selectedData:
-        df_selected_fig2 = parse_callback_json_fig2(selectedData, DATABASE)
+        df_selected_fig2 = parse_callback_json_fig2_right(selectedData, DATABASE)
         table_selected_fig2_right = selected_table(df_selected_fig2)
         return table_selected_fig2_right
     else:

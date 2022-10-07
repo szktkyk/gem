@@ -18,8 +18,10 @@ now = datetime.datetime.now(JST)
 date = now.strftime("%Y%m%d")
 
 # pmc_term = '"genome editing" OR "gene editing" OR CRISPR-Cas* OR cas9 OR cas12 OR cas3 OR sacas9 OR "CRISPR technology" OR "Transcription Activator-Like Effector Nucleases" OR "TAL effector" OR "TALEN" OR "guide RNA" OR sgRNA OR "Zinc finger nuclease" OR ZFN OR "Prime Editing" OR "Base editing" NOT ("Review"[Publication Type]) AND "pubmed pmc"[sb]'
-pubmed_term = '"genome editing" OR "genome writing" OR "gene editing" OR CRISPR-Cas* OR cas9 OR cas12 OR cas3 OR sacas9 OR "CRISPR technology" OR "Transcription Activator-Like Effector Nucleases" OR "TAL effector" OR "TALEN" OR "guide RNA" OR sgRNA OR "Zinc finger nuclease" OR ZFN OR "Prime Editing" OR "Base editing" NOT ("Review"[Publication Type])'
+# pubmed_term = '"genome editing" OR "genome writing" OR "gene editing" OR CRISPR-Cas* OR cas9 OR cas12 OR cas3 OR sacas9 OR "CRISPR technology" OR "Transcription Activator-Like Effector Nucleases" OR "TAL effector" OR "TALEN" OR "guide RNA" OR sgRNA OR "Zinc finger nuclease" OR ZFN OR "Prime Editing" OR "Base editing" NOT ("Review"[Publication Type])'
 # test_term = '"genome editing" mouse'
+pubmed_term = 'zinc-finger-nuclease* OR CRISPR-tech* OR "CRISPR-Associated Proteins"[MeSH] OR gene-edit* OR "CRISPR-Associated Protein 9"[MeSH] OR "genome editing" OR "genome writing" OR "gene editing" OR CRISPR-Cas* OR cas9 OR cas12 OR cas3 OR sacas9 OR "CRISPR technology" OR "Transcription Activator-Like Effector Nucleases" OR "TAL effector" OR "TALEN" OR "guide RNA" OR sgRNA OR "Zinc finger nuclease" OR ZFN OR "Prime editing" OR prime-edit* OR "Base editing" OR base-edit* NOT ("Review"[Publication Type])'
+
 
 
 def main():
