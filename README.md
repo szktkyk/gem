@@ -1,6 +1,6 @@
 # GEM: Genome Editing Meta-database ver1
 ## What is GEM?
-- GEM is the subset of genome editing related metadata from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
+- GEM is the dataset of genome editing related metadata from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
     - PubMed
     - PubMed Central
     - NCBI gene
@@ -17,10 +17,13 @@
 
 ## if you want to make your own dataset
 1. Write searching terms in pubmed_terms in W01_Pubdetails.py.
-2. `python W01_Pubdetails.py`
-3. `python W02_Update_Gene2pubmed.py`
-4. `sh W03_Modifyg2p.sh`
-5. `python W04_GeneCounts.py`
-6. `python W05_CreateMetadata.py` to get the Json file containing metadata.
-7. Write a path to json file in app.py.
-8. `python app.py` to see the json data in localhost.
+2. Build DB by executing from `DB1_Geneinfo.py` to `DB4_Taxonomy.py`
+3. `python W01_Pubdetails.py`
+4. Insert pubdetails into DB by executing `DB7_Pubdetails.py`
+5. `python W02_Update_Gene2pubmed.py`
+6. `sh W03_Modifyg2p.sh`
+7. Insert updated gene2pubmed into DB by executing `DB6_Metadata.py`
+8. `python W05_CreateMetadata.py` to get the json file containing metadata.
+9. Insert metadata into DB by executing `W05_MetadataIntoDB.py`
+10. Write a path to json file in app.py.
+11. `python app.py` to see the json data in localhost.
