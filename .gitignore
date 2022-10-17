@@ -132,3 +132,10 @@ dmypy.json
 data/
 gene_ref/
 genecounts/
+csv/names.csv
+csv/gene_info*
+csv/gene2pubmed*
+csv_gitignore
+log/
+modules/test*
+20221013_test_ge_metadata.csv

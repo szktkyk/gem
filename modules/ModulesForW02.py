@@ -9,7 +9,7 @@ def download_gene2pubmed():
     ftp = FTP(url)
     ftp.login()
     ftp.cwd(path)
-    with open("../data/gene2pubmed.gz", "wb") as f:
+    with open("../csv_gitignore/gene2pubmed.gz", "wb") as f:
         ftp.retrbinary("RETR gene2pubmed.gz", f.write)
     ftp.quit()
 
@@ -20,7 +20,7 @@ def download_gene_info():
     ftp = FTP(url)
     ftp.login()
     ftp.cwd(path)
-    with open("../data/gene_info.gz", "wb") as f:
+    with open("../csv/gene_info.gz", "wb") as f:
         ftp.retrbinary("RETR gene_info.gz", f.write)
     ftp.quit()
 

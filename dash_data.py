@@ -1,5 +1,6 @@
 import json
 from json import tool
+from multiprocessing.sharedctypes import Value
 import sqlite3
 import pandas as pd
 import dash_table
@@ -22,7 +23,7 @@ def data_for_fig1(DATABASE):
         for i in range(2010, 2023):
             # print(f"publication year:{i}")
             cur = con.execute(
-                "select count(distinct pmid) from GEM_metadata where pubdate like '{}%' and getool = '{}' ".format(
+                "select count(distinct pmid) from metadata221017 where pubdate like '{}%' and getool = '{}' ".format(
                     i, tool
                 )
             )
@@ -47,10 +48,10 @@ def data_for_fig4(DATABASE):
     ]
     for tool in tools:
         biopro_cur = con.execute(
-            f"select count(distinct pmid) from GEM_metadata where biopro_id like '[PRJ%' and getool = '{tool}' "
+            f"select count(distinct pmid) from metadata221017 where biopro_id like '[PRJ%' and getool = '{tool}' "
         )
         rna_cur = con.execute(
-            f"select count(distinct pmid) from GEM_metadata where RNA_seq like '[GSE%' and getool = '{tool}' "
+            f"select count(distinct pmid) from metadata221017 where RNA_seq like '[GSE%' and getool = '{tool}' "
         )
         for row in biopro_cur:
             count = row[0]
@@ -65,8 +66,14 @@ def data_for_fig4(DATABASE):
 def data_for_fig2_right(DATABASE):
     list2 = []
     con = sqlite3.connect(DATABASE)
-    tax_csv = pd.read_csv("./csv/tax_list.csv")
-    tax_list = tax_csv["organism_name"].to_list()
+    cur = con.execute("select distinct taxonomyname from fig2 order by entries desc")
+    pre_species_list = cur.fetchall()
+    allspecies = []
+    for x in pre_species_list:
+        allspecies.append(x[0])
+    # tax_csv = pd.read_csv("./csv/tax_list.csv")
+    # tax_list = tax_csv["organism_name"].to_list()
+    tax_list = allspecies[:20]
     tools = [
         "TALEN",
         "ZFN",
@@ -78,7 +85,7 @@ def data_for_fig2_right(DATABASE):
     for tool in tools:
         for specie in tax_list:
             cur = con.execute(
-                "select count(distinct genesymbol) from GEM_metadata where organism_name = '{}' and getool = '{}' ".format(
+                "select count(distinct genesymbol) from metadata221017 where organism_name = '{}' and getool = '{}' ".format(
                     specie, tool
                 )
             )
@@ -93,11 +100,17 @@ def data_for_fig2_right(DATABASE):
 def data_for_fig2_left(DATABASE):
     list3 = []
     con = sqlite3.connect(DATABASE)
-    tax_csv = pd.read_csv("./csv/tax_list.csv")
-    tax_list = tax_csv["organism_name"].to_list()
+    cur = con.execute("select distinct taxonomyname from fig2 order by entries desc")
+    pre_species_list = cur.fetchall()
+    allspecies = []
+    for x in pre_species_list:
+        allspecies.append(x[0])
+    # tax_csv = pd.read_csv("./csv/tax_list.csv")
+    # tax_list = tax_csv["organism_name"].to_list()
+    tax_list = allspecies[:20]
     for specie in tax_list:
         cur = con.execute(
-            f"select count(distinct genesymbol) from GEM_metadata where organism_name = '{specie}' and getool = 'CRISPR-Cas9' "
+            f"select count(distinct genesymbol) from metadata221017 where organism_name = '{specie}' and getool = 'CRISPR-Cas9' "
         )
         for row in cur:
             counts = row[0]
@@ -143,12 +156,13 @@ def parse_callback_json_fig1(selectedData, DATABASE):
     # print(year)
     con = sqlite3.connect(DATABASE)
     sql_query = pd.read_sql_query(
-        "select * from GEM_metadata where pubdate like '{}%' and getool = '{}'".format(
+        "select * from metadata221017 where pubdate like '{}%' and getool = '{}'".format(
             year, tool
         ),
         con,
     )
     df = pd.DataFrame(sql_query)
+    df = df.rename(columns={"getool":"Genome Editing Tool", "pmid":"PubMed ID", "pubtitle":"Publication Title", "pubdate":"Published Date", "organism_name":"Organism Name", "genesymbol":"GeneSymbol", "editing_type":"Editing Type", "gene_counts":"How much the Gene Studied", "biopro_id":"BioProject ID", "RNA_seq":"RNA-seq ID (GEO)", "vector":"Used Vector", "cellline":"Cell line", "tissue":"Tissue type", "Mutation_type":"Mutation Type"})
     con.close()
     return df
 
@@ -163,12 +177,13 @@ def parse_callback_json_fig2_left(selectedData, DATABASE):
     tool = json_content["x"]
     con = sqlite3.connect(DATABASE)
     sql_query = pd.read_sql_query(
-        "select * from GEM_metadata where organism_name = '{}' and getool = '{}'".format(
+        "select * from metadata221017 where organism_name = '{}' and getool = '{}'".format(
             specie, tool
         ),
         con,
     )
     df = pd.DataFrame(sql_query)
+    df = df.rename(columns={"getool":"Genome Editing Tool", "pmid":"PubMed ID", "pubtitle":"Publication Title", "pubdate":"Published Date", "organism_name":"Organism Name", "genesymbol":"GeneSymbol", "editing_type":"Editing Type", "gene_counts":"How much the Gene Studied", "biopro_id":"BioProject ID", "RNA_seq":"RNA-seq ID (GEO)", "vector":"Used Vector", "cellline":"Cell line", "tissue":"Tissue type", "Mutation_type":"Mutation Type"})
     con.close()
     return df
 
@@ -182,12 +197,13 @@ def parse_callback_json_fig2_right(selectedData, DATABASE):
     tool = json_content["x"]
     con = sqlite3.connect(DATABASE)
     sql_query = pd.read_sql_query(
-        "select * from GEM_metadata where organism_name = '{}' and getool = '{}'".format(
+        "select * from metadata221017 where organism_name = '{}' and getool = '{}'".format(
             specie, tool
         ),
         con,
     )
     df = pd.DataFrame(sql_query)
+    df = df.rename(columns={"getool":"Genome Editing Tool", "pmid":"PubMed ID", "pubtitle":"Publication Title", "pubdate":"Published Date", "organism_name":"Organism Name", "genesymbol":"GeneSymbol", "editing_type":"Editing Type", "gene_counts":"How much the Gene Studied", "biopro_id":"BioProject ID", "RNA_seq":"RNA-seq ID (GEO)", "vector":"Used Vector", "cellline":"Cell line", "tissue":"Tissue type", "Mutation_type":"Mutation Type"})
     con.close()
     return df
 
@@ -199,12 +215,12 @@ def parse_callback_json_fig4(selectedData, DATABASE):
     tool = json_content["x"]
     if ngsno == 0:
         sql_query = pd.read_sql_query(
-            f"select * from GEM_metadata where biopro_id like '[PRJ%' and getool = '{tool}'",
+            f"select * from metadata221017 where biopro_id like '[PRJ%' and getool = '{tool}'",
             con,
         )
     if ngsno == 1:
         sql_query = pd.read_sql_query(
-            f"select * from GEM_metadata where RNA_seq like '[GSE%' and getool = '{tool}'",
+            f"select * from metadata221017 where RNA_seq like '[GSE%' and getool = '{tool}'",
             con,
         )
 
@@ -241,6 +257,42 @@ def selected_table(df_selected_fig1):
     )
     return table_selecteddata
 
+def parse_callback_json_specie(value, DATABASE):
+    con = sqlite3.connect(DATABASE)
+    sql_query = pd.read_sql_query(f"select * from metadata221017 where organism_name = '{value}'",con)
+    df = pd.DataFrame(sql_query)
+    df = df.rename(columns={"getool":"Genome Editing Tool", "pmid":"PubMed ID", "pubtitle":"Publication Title", "pubdate":"Published Date", "organism_name":"Organism Name", "genesymbol":"GeneSymbol", "editing_type":"Editing Type", "gene_counts":"How much the Gene Studied", "biopro_id":"BioProject ID", "RNA_seq":"RNA-seq ID (GEO)", "vector":"Used Vector", "cellline":"Cell line", "tissue":"Tissue type", "Mutation_type":"Mutation Type"})
+    con.close()
+    return df
+
+
+def specie_selected_table(df_species):
+    specie_selecteddata = dash_table.DataTable(
+        id="specie_selecteddata",
+        style_cell={
+            "textAlign": "center",
+            "whiteSpace": "normal",
+            "fontSize": 10,
+        },
+        style_table={
+            "minWidth": "100%",
+        },
+        columns=[
+            {
+                "name": i,
+                "id": j,
+                "presentation": "markdown",
+            }
+            for i, j in zip(df_species, df_species.columns)
+        ],
+        data=df_species.to_dict("records"),
+        page_size=20,
+        sort_action="native",
+        filter_action="native",
+        export_format="csv",
+        style_as_list_view=True,
+    )
+    return specie_selecteddata
 
 # selectedData = {
 #     "points": [

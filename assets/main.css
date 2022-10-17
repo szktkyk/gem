@@ -138,3 +138,7 @@ footer {
 footer a {
     color: #488EC4;
 }
+
+.Select--multi .Select-value {
+    display: none;
+}

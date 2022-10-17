@@ -10,7 +10,7 @@ import dash_bootstrap_components as dbc
 from dash_data import *
 
 
-DATABASE = "./data/20220917/20220917_gem.db"
+DATABASE = "./data/gem.db"
 
 app = Dash(__name__)
 
@@ -47,7 +47,7 @@ title_html = html.Div(
 title_right_html = html.Div(
     [
         html.P(
-            "last updated: 2022-Sep-17",
+            "last updated: 2022-Oct-17",
             style={"fontSize": 20, "textAlign": "right"},
         ),
         html.A("About/How to use", href="/assets/about.html", target="_blank"),
@@ -81,9 +81,9 @@ df2 = pd.DataFrame(
     data=list2,
     columns=["genome editing tools", "species", "the number of genes studied"],
 )
-df2s = df2.sort_values("the number of genes studied",ascending=False)
-df2s = df2s.reset_index()
-df2s.to_csv("tax_list_fig2s.csv",columns=['species'],index=True)
+# df2s = df2.sort_values("the number of genes studied",ascending=False)
+df2s = df2.reset_index()
+df2s.to_csv("./csv/tax_list_fig2s.csv",columns=['species'],index=True)
 
 
 list3 = data_for_fig2_left(DATABASE)
@@ -93,7 +93,7 @@ df3 = pd.DataFrame(
 )
 df3s = df3.sort_values("the number of genes studied",ascending=False)
 df3s = df3s.reset_index()
-df3s.to_csv("tax_list_fig3s.csv",columns=['species'],index=True)
+df3s.to_csv("./csv/tax_list_fig3s.csv",columns=['species'],index=True)
 
 list4 = data_for_fig4(DATABASE)
 df_fig4 = pd.DataFrame(
@@ -102,9 +102,11 @@ df_fig4 = pd.DataFrame(
 )
 
 
-df4 = pd.read_csv("20220917_ge_metadata.csv")
+df4 = pd.read_csv("20221017_metadata.csv")
 df4 = df4.rename(columns={"getool":"Genome Editing Tool", "pmid":"PubMed ID", "pubtitle":"Publication Title", "pubdate":"Published Date", "organism_name":"Organism Name", "genesymbol":"GeneSymbol", "editing_type":"Editing Type", "gene_counts":"How much the Gene Studied", "biopro_id":"BioProject ID", "RNA_seq":"RNA-seq ID (GEO)", "vector":"Used Vector", "cellline":"Cell line", "tissue":"Tissue type", "Mutation_type":"Mutation Type"})
-
+df4["How much the Gene Studied"] = df4["How much the Gene Studied"].astype('int',errors='ignore')
+allspecies = df4['Organism Name'].unique().tolist()
+# print(allspecies)
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/dWLwgP.css"]
 
@@ -177,7 +179,7 @@ second_figs_html = html.Div(
             style={"fontSize": 20, "textAlign": "left"},
         ),
         html.P(
-            "Please select the area on the figure below to retrive metadata",
+            "Please select a specie from the dropdown options or select the area on the figure below to retrive metadata",
         ),
     ],
     style={
@@ -257,6 +259,12 @@ before_table_html = html.Div(
     },
 )
 
+table_output = html.Div(
+    [
+        html.P(id="table_output", style={"fontSize": 15, "textAlign": "center"}),
+    ]
+)
+
 table = dash_table.DataTable(
     id="table",
     style_cell={
@@ -276,7 +284,7 @@ table = dash_table.DataTable(
         for i, j in zip(df4, df4.columns)
     ],
     data=df4.to_dict("records"),
-    page_size=50,
+    page_size=40,
     sort_action="native",
     filter_action="native",
     export_format="csv",
@@ -313,6 +321,12 @@ app.layout = html.Div(
         html.Div([firstfig, fig4]),
         html.Div([fig1_output, fig4_output]),
         html.Div([second_figs_html]),
+        dcc.Dropdown(
+            id="filter_dropdown",
+            options=[{"label":st,"value":st} for st in allspecies],
+            placeholder="-Select a specie-",
+            multi=False),
+        html.Div([table_output]),
         html.Div([second_left_fig, second_right_fig]),
         html.Div([fig2_output]),
         html.Div([before_table_html]),
@@ -377,6 +391,20 @@ def CreateTableFig2Left(selectedData):
         df_selected_fig2 = parse_callback_json_fig2_right(selectedData, DATABASE)
         table_selected_fig2_right = selected_table(df_selected_fig2)
         return table_selected_fig2_right
+    else:
+        html.Div()
+
+
+@app.callback(
+    Output("table_output","children"),
+    Input("filter_dropdown","value"),
+    prevent_initial_call=True,
+)
+def display_table(value):
+    if value:
+        df_species = parse_callback_json_specie(value,DATABASE)
+        table_filter_dropdown = specie_selected_table(df_species)
+        return table_filter_dropdown
     else:
         html.Div()
 
