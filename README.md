@@ -8,7 +8,14 @@
     - MeSH
     - NCBI taxonomy
 
-## Usage
+## Used data for metadata collection
+- gene_info.gz (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz) (2022-Oct-12)
+- gene2pubmed (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz) (2022-Oct-12)
+- mtrees2022.bin (https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/meshtrees/mtrees2022.bin) (downloaded at 2022-Oct-12)
+- new_taxdump (https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/) (downloaded at 2022-Jun-28)
+- PubTator central (used in calculation between 2022-Oct-14 - 2022-Oct-16)
+
+## How to use interface in your local environment
 1. install miniconda
 2. move to the gem directory
 3. `conda create -n gemenv --file env_name_intel.txt`
@@ -28,9 +35,3 @@
 10. Write a path to json file in app.py.
 11. `python app.py` to see the json data in localhost.
 
-## Used data for metadata collection
-- gene_info.gz (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz) (2022-Oct-12)
-- gene2pubmed (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz) (2022-Oct-12)
-- mtrees2022.bin (https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/meshtrees/mtrees2022.bin) (downloaded at 2022-Oct-12)
-- new_taxdump (https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/) (downloaded at 2022-Jun-28)
-- PubTator central (used in calculation between 2022-Oct-14 - 2022-Oct-16)
