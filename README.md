@@ -28,7 +28,7 @@
 10. Write a path to json file in app.py.
 11. `python app.py` to see the json data in localhost.
 
-## used data for metadata collection
+## Used data for metadata collection
 - gene_info.gz (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz) (2022-Oct-12)
 - gene2pubmed (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz) (2022-Oct-12)
 - mtrees2022.bin (https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/meshtrees/mtrees2022.bin) (downloaded at 2022-Oct-12)
