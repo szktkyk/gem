@@ -168,7 +168,7 @@ def parse_callback_json_fig1(selectedData, DATABASE):
 
 
 def parse_callback_json_fig2_left(selectedData, DATABASE):
-    df_fig3s = pd.read_csv("./tax_list_fig3s.csv")
+    df_fig3s = pd.read_csv("./csv/tax_list_fig3s.csv")
     json_content = selectedData["points"][0]
     taxno = json_content["curveNumber"]
     row = df_fig3s[df_fig3s.iloc[:,0] == int(taxno)]
@@ -188,7 +188,7 @@ def parse_callback_json_fig2_left(selectedData, DATABASE):
     return df
 
 def parse_callback_json_fig2_right(selectedData, DATABASE):
-    df_fig2s = pd.read_csv("./tax_list_fig2s.csv")
+    df_fig2s = pd.read_csv("./csv/tax_list_fig2s.csv")
     json_content = selectedData["points"][0]
     taxno = json_content["curveNumber"]
     row = df_fig2s[df_fig2s.iloc[:,0] == int(taxno)]
