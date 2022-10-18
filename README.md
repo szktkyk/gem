@@ -14,7 +14,7 @@
 ## How to use interface in your local environment 
 1. install miniconda
 2. move to the gem directory
-3. `conda create -n gemenv --file env_name_intel.txt`
+3. `conda create -n gemenv --file env_package.txt`
 4. `conda activate gemenv`
 5. `python app.py` to start the web application in your localhost.
 
