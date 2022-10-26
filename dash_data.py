@@ -257,7 +257,7 @@ def selected_table(df_selected_fig1):
     )
     return table_selecteddata
 
-def parse_callback_json_specie(value, DATABASE):
+def parse_callback_json_species(value, DATABASE):
     con = sqlite3.connect(DATABASE)
     sql_query = pd.read_sql_query(f"select * from metadata221017 where organism_name = '{value}'",con)
     df = pd.DataFrame(sql_query)
@@ -266,7 +266,7 @@ def parse_callback_json_specie(value, DATABASE):
     return df
 
 
-def specie_selected_table(df_species):
+def species_selected_table(df_species):
     specie_selecteddata = dash_table.DataTable(
         id="specie_selecteddata",
         style_cell={
@@ -293,6 +293,34 @@ def specie_selected_table(df_species):
         style_as_list_view=True,
     )
     return specie_selecteddata
+
+
+def data_for_species_fig(DATABASE,species):
+    datalist = []
+    con = sqlite3.connect(DATABASE)
+
+    tools = [
+        "CRISPR-Cas9",
+        "TALEN",
+        "ZFN",
+        "CRISPR-Cas12",
+        "CRISPR-Cas3",
+        "Base editor",
+        "Prime editor",
+    ]
+    for tool in tools:
+        cur = con.execute(
+            "select count(distinct genesymbol) from metadata221017 where organism_name = '{}' and getool = '{}' ".format(
+                species, tool
+            )
+        )
+        for row in cur:
+            counts = row[0]
+            # print(counts)
+            datalist.append([tool, species, counts])
+    con.close()
+    return datalist
+
 
 # selectedData = {
 #     "points": [

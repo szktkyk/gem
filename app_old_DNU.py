@@ -192,12 +192,6 @@ second_figs_html = html.Div(
     },
 )
 
-species_output = html.Div(
-    [
-        html.P(id="species_output_div", style={"fontSize": 15, "textAlign": "center"}),
-    ]
-)
-
 second_left_fig = html.Div(
     [
         dcc.Graph(
@@ -253,7 +247,7 @@ fig2_output = html.Div(
 before_table_html = html.Div(
     [
         html.H1(
-            "WHOLE DATASET",
+            "Dataset",
             style={"fontSize": 20, "textAlign": "left"},
         ),
     ],
@@ -331,9 +325,8 @@ app.layout = html.Div(
         dcc.Dropdown(
             id="filter_dropdown",
             options=[{"label":st,"value":st} for st in allspecies],
-            placeholder="-Select a species-",
+            placeholder="-Select a specie-",
             multi=False),
-        html.Div([species_output]),
         html.Div([table_output]),
         html.Div([second_left_fig, second_right_fig]),
         html.Div([fig2_output]),
@@ -410,34 +403,9 @@ def CreateTableFig2Left(selectedData):
 )
 def display_table(value):
     if value:
-        datalist = data_for_species_fig(DATABASE,value)
-        df05 = pd.DataFrame(
-            data=datalist,
-            columns=["genome editing tools", "species", "the number of genes studied"],
-        )
-        species_fig = html.Div(
-            [
-                dcc.Graph(
-                    id="species_figure",
-                    figure=px.bar(
-                        df05,
-                        x="genome editing tools",
-                        y="the number of genes studied",
-                        color="species",
-                    ),
-                ),
-            ],
-            style={
-                "width": "70%",
-                # "margin": "1%",
-                "display": "inline-block",
-                "verticalAlign": "top",
-                "textAlign": "right",
-            },
-        )
-        df_species = parse_callback_json_species(value,DATABASE)
-        table_filter_dropdown = species_selected_table(df_species)
-        return species_fig, table_filter_dropdown
+        df_species = parse_callback_json_specie(value,DATABASE)
+        table_filter_dropdown = specie_selected_table(df_species)
+        return table_filter_dropdown
     else:
         html.Div()
 
