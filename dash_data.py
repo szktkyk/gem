@@ -322,6 +322,51 @@ def data_for_species_fig(DATABASE,species):
     return datalist
 
 
+def parse_callback_json_getools(value, DATABASE):
+    con = sqlite3.connect(DATABASE)
+    sql_query = pd.read_sql_query(f"select * from pmid_getools where getools = '{value}'",con)
+    df = pd.DataFrame(sql_query)
+    df = df.rename(columns={"pmid":"PubMed ID", "getool":"Genome Editing Tool", "pubtitle":"Publication Title", "biopro_id":"BioProject ID", "RNA_seq":"RNA-seq ID (GEO)", "vector":"Used Vector", "cellline":"Cell line", "editing_type":"Editing Type", "tissue":"Tissue type", "Mutation_type":"Mutation Type"})
+    con.close()
+    return df
+
+
+def getools_selected_table(df_getools):
+    getools_selecteddata = dash_table.DataTable(
+        id="getools_selecteddata",
+        style_cell={
+            "textAlign": "center",
+            "whiteSpace": "normal",
+            "fontSize": 10,
+        },
+        style_table={
+            "minWidth": "100%",
+        },
+        columns=[
+            {
+                "name": i,
+                "id": j,
+                "presentation": "markdown",
+            }
+            for i, j in zip(df_getools, df_getools.columns)
+        ],
+        data=df_getools.to_dict("records"),
+        page_size=20,
+        sort_action="native",
+        filter_action="native",
+        export_format="csv",
+        style_as_list_view=True,
+    )
+    return getools_selecteddata
+
+
+def getools_list(DATABASE):
+    con = sqlite3.connect(DATABASE)
+    cur = con.execute("select distinct getools from pmid_getools")
+    getools_categories = [i[0] for i in cur.fetchall()]
+    con.close() 
+    return getools_categories
+
 # selectedData = {
 #     "points": [
 #         {

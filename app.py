@@ -109,6 +109,10 @@ df4["How much the Gene Studied"] = df4["How much the Gene Studied"].astype('int'
 allspecies = df4['Organism Name'].unique().tolist()
 # print(allspecies)
 
+
+getools_categories = getools_list(DATABASE)
+# print(getools_categories)
+
 external_stylesheets = ["https://codepen.io/chriddyp/pen/dWLwgP.css"]
 
 
@@ -213,7 +217,7 @@ second_left_fig = html.Div(
         ),
     ],
     style={
-        "width": "30%",
+        "width": "40%",
         # "margin": "1%",
         "display": "inline-block",
         "verticalAlign": "top",
@@ -235,7 +239,7 @@ second_right_fig = html.Div(
         ),
     ],
     style={
-        "width": "60%",
+        "width": "55%",
         # "margin": "1%",
         "display": "inline-block",
         "verticalAlign": "top",
@@ -246,6 +250,31 @@ fig2_output = html.Div(
     [
         html.P(id="fig2_output_div1", style={"fontSize": 15, "textAlign": "center"}),
         html.P(id="fig2_output_div2", style={"fontSize": 15, "textAlign": "center"}),
+    ]
+)
+
+getools_html = html.Div(
+    [
+        html.H1(
+            "browse by genome editing tools",
+            style={"fontSize": 20, "textAlign": "left"},
+        ),
+        html.P(
+            "Please select a combination of genome editing tools from the dropdown options",
+        ),
+    ],
+    style={
+        # "width": "49%",
+        "margin": "1%",
+        "display": "inline-block",
+        "verticalAlign": "top",
+        "textAlign": "left",
+    },
+)
+
+getools_output = html.Div(
+    [
+        html.P(id="getools_output_div", style={"fontSize": 15, "textAlign": "center"}),
     ]
 )
 
@@ -337,6 +366,13 @@ app.layout = html.Div(
         html.Div([table_output]),
         html.Div([second_left_fig, second_right_fig]),
         html.Div([fig2_output]),
+        html.Div([getools_html]),
+        dcc.Dropdown(
+            id="filter_dropdown_getools",
+            options=[{"label":st,"value":st} for st in getools_categories],
+            placeholder="-Select a combination of genome editing tools-",
+            multi=False),
+        html.Div([getools_output]),
         html.Div([before_table_html]),
         html.Div([table]),
         html.Div([license]),
@@ -394,7 +430,7 @@ def CreateTableFig2Left(selectedData):
     [Input("fig2_right", "selectedData")],
     prevent_initial_call=True,
 )
-def CreateTableFig2Left(selectedData):
+def CreateTableFig2right(selectedData):
     if selectedData:
         df_selected_fig2 = parse_callback_json_fig2_right(selectedData, DATABASE)
         table_selected_fig2_right = selected_table(df_selected_fig2)
@@ -438,6 +474,20 @@ def display_table(value):
         df_species = parse_callback_json_species(value,DATABASE)
         table_filter_dropdown = species_selected_table(df_species)
         return species_fig, table_filter_dropdown
+    else:
+        html.Div()
+
+
+@app.callback(
+    Output("getools_output_div","children"),
+    Input("filter_dropdown_getools","value"),
+    prevent_initial_call=True,
+)
+def display_table_getools(value):
+    if value:
+        df_getools = parse_callback_json_getools(value,DATABASE)
+        table_filter_dropdown_getools = getools_selected_table(df_getools)
+        return table_filter_dropdown_getools
     else:
         html.Div()
 
