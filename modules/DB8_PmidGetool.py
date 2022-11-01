@@ -1,6 +1,13 @@
 import json
 import sqlite3
 import pandas as pd
+import datetime
+
+t_delta = datetime.timedelta(hours=9)
+JST = datetime.timezone(t_delta, "JST")
+now = datetime.datetime.now(JST)
+date = now.strftime("%Y%m%d")
+
 
 connection = sqlite3.connect("../data/gem.db")
 cursor = connection.cursor()
@@ -8,7 +15,7 @@ cursor.execute(
     "Create table pmid_getools (pmid Text, getools Text, pubtitle Text, bioproid Text, RNA_seq Text, vector Text, cellline Text, editing_type Text, tissue Text, Mutation_type Text)"
 )
 
-traffic = json.load(open("../csv_gitignore/20221031_pmid_getools.json"))
+traffic = json.load(open(f"../csv_gitignore/{date}_pmid_getools.json"))
 print(f"length:{len(traffic)}")
 columns = [
     "pmid",

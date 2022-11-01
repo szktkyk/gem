@@ -118,7 +118,7 @@ external_stylesheets = ["https://codepen.io/chriddyp/pen/dWLwgP.css"]
 
 firstfig = html.Div(
     [
-        html.H1("browse by publication year", style={"fontSize": 20}),
+        html.H1("Search by Publication Year", style={"fontSize": 20}),
         html.P("Please select the area on the figure below to retrive metadata"),
         dcc.Graph(
             id="fig1",
@@ -142,7 +142,7 @@ firstfig = html.Div(
 
 fig4 = html.Div(
     [
-        html.H1("browse by NGS data availability", style={"fontSize": 20}),
+        html.H1("Search by NGS data availability", style={"fontSize": 20}),
         html.P("Please select the area on the figure below to retrive metadata"),
         dcc.Graph(
             id="fig4",
@@ -180,7 +180,7 @@ fig4_output = html.Div(
 second_figs_html = html.Div(
     [
         html.H1(
-            "browse by species",
+            "Search by Species",
             style={"fontSize": 20, "textAlign": "left"},
         ),
         html.P(
@@ -256,7 +256,7 @@ fig2_output = html.Div(
 getools_html = html.Div(
     [
         html.H1(
-            "browse by genome editing tools",
+            "Search by Genome editing tools",
             style={"fontSize": 20, "textAlign": "left"},
         ),
         html.P(
@@ -297,7 +297,7 @@ before_table_html = html.Div(
 
 table_output = html.Div(
     [
-        html.P(id="table_output", style={"fontSize": 15, "textAlign": "center"}),
+        html.P(id="table_output", style={"fontSize": 10, "textAlign": "center"}),
     ]
 )
 
@@ -306,7 +306,7 @@ table = dash_table.DataTable(
     style_cell={
         "textAlign": "center",
         "whiteSpace": "normal",
-        "fontSize": 12,
+        "fontSize": 10,
     },
     style_table={
         "minWidth": "100%",

@@ -10,6 +10,11 @@ import sqlite3
 DATABASE = "../data/gem.db"
 con = sqlite3.connect(DATABASE)
 
+t_delta = datetime.timedelta(hours=9)
+JST = datetime.timezone(t_delta, "JST")
+now = datetime.datetime.now(JST)
+date = now.strftime("%Y%m%d")
+
 cur = con.execute("select distinct pmid from metadata221017")
 rs = cur.fetchall()
 # print(rs)
@@ -50,9 +55,9 @@ for tuplepmid in rs:
     getools.append({'pmid':pmid, 'getools':tmp_str,'pubtitle':pubtitle,'bioproid':bioproid,'RNA_seq':RNA_seq,'vector':vector,'cellline':cellline,'editing_type':editing_type,'tissue':tissue,'Mutation_type':Mutation_type})
     # # print(tmp_str)
 
-with open(f"/Users/suzuki/gem/csv_gitignore/20221031_pmid_getools.json", "w") as f:
+with open(f"/Users/suzuki/gem/csv_gitignore/{date}_pmid_getools.json", "w") as f:
     json.dump(getools, f, indent=3)
 
-df_metadata = pd.DataFrame(getools)
-df_metadata.to_csv("../20221031_pmid_getools.csv")
+# df_metadata = pd.DataFrame(getools)
+# df_metadata.to_csv("../20221031_pmid_getools.csv")
 con.close()
