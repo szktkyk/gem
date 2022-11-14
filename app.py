@@ -33,7 +33,7 @@ title_html = html.Div(
             style={"fontSize": 25, "textAlign": "left"},
         ),
         html.P(
-            "Metadata extracted from PubMed Central, PubTator Central, NCBI gene",
+            "A dataset of genome editing related metadata extracted from PubMed literatures",
         ),
     ],
     style={
