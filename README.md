@@ -1,4 +1,3 @@
-# Branch for development
 ## What is GEM?
 - GEM is the dataset of genome editing related metadata automatically extracted from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
     - PubMed
