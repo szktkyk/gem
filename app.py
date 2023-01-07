@@ -33,7 +33,10 @@ title_html = html.Div(
             style={"fontSize": 25, "textAlign": "left"},
         ),
         html.P(
-            "A dataset of genome editing related metadata extracted from PubMed literatures",
+            "A dataset of genome editing related metadata extracted from PubMed literatures.",
+        ),
+        html.P(
+            "Search for data from the dropdown menus or figures below",
         ),
     ],
     style={
@@ -354,6 +357,13 @@ license = html.Div(
 app.layout = html.Div(
     children=[
         html.Div([title_html, title_right_html]),
+        html.Div([getools_html]),
+        dcc.Dropdown(
+            id="filter_dropdown_getools",
+            options=[{"label":st,"value":st} for st in getools_categories],
+            placeholder="-Select a combination of genome editing tools-",
+            multi=False),
+        html.Div([getools_output]),
         html.Div([firstfig, fig4]),
         html.Div([fig1_output, fig4_output]),
         html.Div([second_figs_html]),
@@ -366,13 +376,6 @@ app.layout = html.Div(
         html.Div([table_output]),
         html.Div([second_left_fig, second_right_fig]),
         html.Div([fig2_output]),
-        html.Div([getools_html]),
-        dcc.Dropdown(
-            id="filter_dropdown_getools",
-            options=[{"label":st,"value":st} for st in getools_categories],
-            placeholder="-Select a combination of genome editing tools-",
-            multi=False),
-        html.Div([getools_output]),
         html.Div([before_table_html]),
         html.Div([table]),
         html.Div([license]),

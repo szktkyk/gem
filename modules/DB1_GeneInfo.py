@@ -5,22 +5,23 @@ import sqlite3
 import csv
 import os
 
-# # Download gene_info from ftp site to the local data directory (every 2 months?)
-# download_gene_info()
-# # gunzip gene_info
-# source_file = "../csv_gitignore/gene_info.gz"
-# command = ["gunzip", source_file]
-# time.sleep(1)
-# subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-# time.sleep(1)
-# command = ["mv", "../csv/gene_info", "../csv/gene_info.tsv"]
-# subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-# print("gene_info is downloaded in the local csv directory")
+# Download gene_info from ftp site to the local data directory (every 2 months?)
+download_gene_info()
+time.sleep(1)
+# gunzip gene_info
+source_file = "../csv/gene_info.gz"
+command = ["gunzip", source_file]
+time.sleep(1)
+subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+time.sleep(1)
+command = ["mv", "../csv/gene_info", "../csv/gene_info.tsv"]
+subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+print("gene_info is downloaded in the local csv directory")
 
 
 dbname = "../data/gem.db"
 target_table_name = "gene_info"
-import_table_name = "../csv_gitignore/gene_info.tsv"
+import_table_name = "../csv/gene_info.tsv"
 is_create_table = True
 is_header_skip = True
 

@@ -27,14 +27,14 @@ def get_datalist_from_log(logfilepath):
 # print(new_pmids)
 # exit()
 
-logfilepath1 = "../log/20221013_W02_log.txt"
-data_list = get_datalist_from_log(logfilepath1)
-# logfilepath2 = "20220818_W02working_log.txt"
-# data_list2 = get_datalist_from_log(logfilepath2)
-# data_list = data_list1 + data_list2
+logfilepath1 = "../log/20221214_W02_log.txt"
+data_list1 = get_datalist_from_log(logfilepath1)
+logfilepath2 = "../log/20221215_W02_log.txt"
+data_list2 = get_datalist_from_log(logfilepath2)
+data_list = data_list1 + data_list2
 
 df_new = pd.DataFrame(data=data_list)
 print(df_new)
 df_g2p_updated = pd.concat([df_g2p, df_new])
-df_g2p_updated.to_csv(f"../csv_gitignore/20221013_g2p_updated.csv")
+df_g2p_updated.to_csv(f"../csv_gitignore/20221215_g2p_updated.csv")
 exit()

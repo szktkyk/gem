@@ -3,11 +3,25 @@ import pandas as pd
 import re
 import datetime
 from ModulesForW05 import *
+from Module02LogRead_W04 import *
 import ast
 import sqlite3
+import random
 
 DATABASE = "../data/gem.db"
 con = sqlite3.connect(DATABASE)
+
+# t_delta = datetime.timedelta(hours=9)
+# JST = datetime.timezone(t_delta, "JST")
+# now = datetime.datetime.now(JST)
+# date = now.strftime("%Y%m%d")
+date = "20221215"
+
+path = f"/Users/suzuki/gem/csv_gitignore/20221215_g2p_updated.tsv"
+df_gene2pubmed = pd.read_csv(path, sep="\t")
+df_pubdetails = pd.read_csv(
+    f"/Users/suzuki/gem/data/20221214/20221214_pubdetails.csv", sep=","
+)
 
 parse_patterns = {
     "CRISPR-Cas9": re.compile("CRISPR.Cas9|\scas9|spcas9", re.IGNORECASE),
@@ -164,29 +178,27 @@ def parse_part2(pmid, pmcid, df_pubdetails, tree):
     return editing_type_str, bioproid_list, addgene, geoid_list
 
 
-t_delta = datetime.timedelta(hours=9)
-JST = datetime.timezone(t_delta, "JST")
-now = datetime.datetime.now(JST)
-date = now.strftime("%Y%m%d")
-# date = "20220820"
-
-path = f"/Users/suzuki/gem/csv_gitignore/{date}_g2p_updated.tsv"
-df_gene2pubmed = pd.read_csv(path, sep="\t")
-df_pubdetails = pd.read_csv(
-    f"/Users/suzuki/gem/data/20221013/20221013_pubdetails.csv", sep=","
-)
 
 pmids = df_pubdetails["pmid"].tolist()
-print(f"the number of pmids are {len(pmids)}")
-ge_metadata = []
+# print(f"the number of pmids are {len(pmids)}")
+logfilepath1 = "../log/20221216_W04_log.txt"
+ge_metadata, pmid_list = get_datalist_from_log(logfilepath1)
+print(f"the number of all pmids: {len(pmids)}")
+print(f"the number of current ge_metadata in the log: {len(ge_metadata)}")
+print(f"the number of done pmids: {len(pmid_list)}")
+todopmid = list(set(pmids) - set(pmid_list))
+todopmid.append(26167643)
+print(f"the number of todo pmids: {len(todopmid)}")
 
 
-for pmid in pmids:
+# ge_metadata = []
+
+for pmid in todopmid:
     # parse_part1 and parse_part2
     print(f"\npmid....:{pmid}")
     try:
-        cur = con.execute(f"select * from updatedg2p where PubMed_ID = '{pmid}'")
-        rows = cur.fetchall()
+        cur1 = con.execute(f"select * from updatedg2p where PubMed_ID = '{pmid}'")
+        rows = cur1.fetchall()
     except:
         print(f"error at g2p sql search.. loop continue")
         continue
@@ -220,11 +232,37 @@ for pmid in pmids:
             except:
                 print("parse_part2 error. loop continue..")
                 continue
+
         # if the number of row is over 1000, this pmid entry is omitted
         # number_row = len(row.axes[0])
         if len(rows) > 1000:
             print("too many rows (more than 1000). Only the first row is processing")
             taxid = rows[0][0]
+            taxidlineage_cur = con.execute(f"select taxids from taxidlineage where id = '{taxid}'")
+            taxidlineage = taxidlineage_cur.fetchone()[0]
+            taxonomy_category = []
+            if " 8292 " in taxidlineage:
+                taxonomy_category.append("amphibians")
+            if " 8782 " in taxidlineage:
+                taxonomy_category .append("birds")
+            if " 186634 " in taxidlineage:
+                taxonomy_category.append("fishes")
+            if " 40674 " in taxidlineage:
+                taxonomy_category.append("mammals")
+            if " 8504 " in taxidlineage:
+                taxonomy_category.append("reptiles")
+            if " 50557 " in taxidlineage:
+                taxonomy_category.append("insects")
+            if " 2 " in taxidlineage:
+                taxonomy_category.append("bacteria")
+            if " 4751 " in taxidlineage:
+                taxonomy_category.append("fungi")
+            if " 3193 " in taxidlineage:
+                taxonomy_category.append("plants")
+            if " 6239 " in taxidlineage:
+                taxonomy_category.append("Nematoda")
+            taxonomy_category_str = ",".join(taxonomy_category)
+            
             cur2 = con.execute(f"select tax_name from taxonomy where tax_id = '{taxid}'")
             taxname = cur2.fetchone()[0]
             geneid = rows[0][1]
@@ -271,6 +309,12 @@ for pmid in pmids:
                     data = f"[{id}](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={id})"
                     pre_list.append(data)
                 geoid = ",".join(pre_list)
+            # try:
+            #     cur5 = con.execute(f"select species_category from species_category where pmid = '{pmid}'")
+            #     species_category = cur5.fetchone()[0]
+            # except:
+            #     print("no species_category found")
+            #     species_category = "Not found"
 
             for getool in getools:
                 metadata = {
@@ -278,6 +322,7 @@ for pmid in pmids:
                     "pmid": f"[{pmid}](http://rdf.ncbi.nlm.nih.gov/pubmed/{pmid})",
                     "pubtitle": pubtitle,
                     "pubdate": pubdate,
+                    "taxonomy_category": taxonomy_category_str,
                     "organism_name": taxname,
                     "genesymbol": data_genesymbol,
                     "editing_type": editing_type,
@@ -295,16 +340,41 @@ for pmid in pmids:
         else:
             for row in rows:
                 taxid = row[0]
-                cur2 = con.execute(f"select tax_name from taxonomy where tax_id = '{taxid}'")
-                taxname = cur2.fetchone()[0]
+                taxidlineage_cur = con.execute(f"select taxids from taxidlineage where id = '{taxid}'")
+                taxidlineage = taxidlineage_cur.fetchone()[0]
+                taxonomy_category = []
+                if " 8292 " in taxidlineage:
+                    taxonomy_category.append("amphibians")
+                if " 8782 " in taxidlineage:
+                    taxonomy_category .append("birds")
+                if " 186634 " in taxidlineage:
+                    taxonomy_category.append("fishes")
+                if " 40674 " in taxidlineage:
+                    taxonomy_category.append("mammals")
+                if " 8504 " in taxidlineage:
+                    taxonomy_category.append("reptiles")
+                if " 50557 " in taxidlineage:
+                    taxonomy_category.append("insects")
+                if " 2 " in taxidlineage:
+                    taxonomy_category.append("bacteria")
+                if " 4751 " in taxidlineage:
+                    taxonomy_category.append("fungi")
+                if " 3193 " in taxidlineage:
+                    taxonomy_category.append("plants")
+                if " 6239 " in taxidlineage:
+                    taxonomy_category.append("Nematoda")
+                taxonomy_category_str = ",".join(taxonomy_category)
+
+                cur6 = con.execute(f"select tax_name from taxonomy where tax_id = '{taxid}'")
+                taxname = cur6.fetchone()[0]
                 geneid = row[1]
                 if geneid != "NotFound":
                     geneurl = f"https://www.ncbi.nlm.nih.gov/gene/{geneid}"
-                    cur3 = con.execute(f"select Symbol from gene_info where GeneID = '{geneid}'")
-                    genesymbol = cur3.fetchone()[0]     
+                    cur7 = con.execute(f"select Symbol from gene_info where GeneID = '{geneid}'")
+                    genesymbol = cur7.fetchone()[0]     
                     data_genesymbol = "[{}]({})".format(genesymbol,geneurl)       
-                    cur4 = con.execute(f"select count(*) from updatedg2p where GeneID = '{geneid}'")
-                    genecounts = cur4.fetchone()[0]
+                    cur8 = con.execute(f"select count(*) from updatedg2p where GeneID = '{geneid}'")
+                    genecounts = cur8.fetchone()[0]
 
                 else:
                     print("fail at getting geneid and genecounts.")
@@ -348,6 +418,7 @@ for pmid in pmids:
                         "pmid": f"[{pmid}](http://rdf.ncbi.nlm.nih.gov/pubmed/{pmid})",
                         "pubtitle": pubtitle,
                         "pubdate": pubdate,
+                        "taxonomy_category": taxonomy_category_str,
                         "organism_name": taxname,
                         "genesymbol": data_genesymbol,
                         "editing_type": editing_type,
@@ -368,4 +439,6 @@ with open(f"/Users/suzuki/gem/csv_gitignore/{date}_ge_metadata.json", "w") as f:
     json.dump(ge_metadata, f, indent=3)
 
 df_metadata = pd.DataFrame(ge_metadata)
-df_metadata.to_csv("../20221013_test_ge_metadata.csv")
+df_metadata.to_csv(f"../{date}_ge_metadata.csv")
+
+con.close()

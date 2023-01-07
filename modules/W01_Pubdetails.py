@@ -16,6 +16,7 @@ t_delta = datetime.timedelta(hours=9)
 JST = datetime.timezone(t_delta, "JST")
 now = datetime.datetime.now(JST)
 date = now.strftime("%Y%m%d")
+# date = "20221214"
 
 # pmc_term = '"genome editing" OR "gene editing" OR CRISPR-Cas* OR cas9 OR cas12 OR cas3 OR sacas9 OR "CRISPR technology" OR "Transcription Activator-Like Effector Nucleases" OR "TAL effector" OR "TALEN" OR "guide RNA" OR sgRNA OR "Zinc finger nuclease" OR ZFN OR "Prime Editing" OR "Base editing" NOT ("Review"[Publication Type]) AND "pubmed pmc"[sb]'
 # pubmed_term = '"genome editing" OR "genome writing" OR "gene editing" OR CRISPR-Cas* OR cas9 OR cas12 OR cas3 OR sacas9 OR "CRISPR technology" OR "Transcription Activator-Like Effector Nucleases" OR "TAL effector" OR "TALEN" OR "guide RNA" OR sgRNA OR "Zinc finger nuclease" OR ZFN OR "Prime Editing" OR "Base editing" NOT ("Review"[Publication Type])'
@@ -28,7 +29,7 @@ def main():
     """
     use e-utilities to get publication details and to make a csv file
     """
-    pmids_list = get_pmids(pubmed_term)
+    pmids_list = get_pmids_new(f"/Users/suzuki/{date}_efetch.txt")
     print(f"number of pmids: {len(pmids_list)}")
     pmids_metadata = get_pubdetails(pmids_list, 200)
     field_name = [
@@ -82,6 +83,28 @@ def get_pmids(term: str) -> list:
     return pmids_list
 
 
+def get_pmids_new(file_path: str) -> list:
+    """
+    Make a list of pmids searched by specific term
+
+    Prameters:
+    ---------------
+    term: file_path
+        A txt file containing all the necessary pmids
+
+    Returns:
+    ----------------
+    pmids_list: list
+        A list of all the pmids resulted from the search term
+    """
+    with open(file_path) as f:
+        lines = f.readlines()
+    
+    pmids_list = [line.rstrip('\n') for line in lines]
+
+    return pmids_list
+
+
 def get_text_by_tree(treepath, element):
     """
     Parameters:
@@ -126,24 +149,27 @@ def get_pubdetails(pmids: list, max_len: int) -> list:
 
     list_of_chunked_pmids = generate_chunked_id_list(pmids, max_len)
     pmids_metadata = []
-    url_base = "https://eutils.ncbi.nlm.nih.gov/"
 
     for a_chunked_pmids in list_of_chunked_pmids:
         # print(a_chunked_pmids)
         pmid_str = ",".join(a_chunked_pmids)
-        epost_params = "entrez/eutils/epost.fcgi?db=pubmed&id={}&api_key={}"
-        api1 = url_base + epost_params.format(pmid_str, os.getenv("api_key"))
+        epost_params = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/epost.fcgi?db=pubmed&id={}&api_key={}"
+        api1 = epost_params.format(pmid_str, os.getenv("api_key"))
         print(api1)
         print("connected to epost...")
 
         tree1 = use_eutils(api1)
         webenv = ""
         webenv = tree1.find("WebEnv").text
-        esummary_params = "entrez/eutils/efetch.fcgi?db=pubmed&WebEnv={}&query_key=1&api_key={}&retmode=xml"
-        api2 = url_base + esummary_params.format(webenv, os.getenv("api_key"))
+        esummary_params = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&WebEnv={}&query_key=1&api_key={}&retmode=xml"
+        api2 = esummary_params.format(webenv, os.getenv("api_key"))
         print("connected to efetch...")
         print(api2)
-        tree2 = use_eutils(api2)
+        try:
+            tree2 = use_eutils(api2)
+        except:
+            print("error at {}".format(api2))
+            continue
 
         for element in tree2.iter("PubmedArticle"):
 

@@ -9,9 +9,12 @@ t_delta = datetime.timedelta(hours=9)
 JST = datetime.timezone(t_delta, "JST")
 now = datetime.datetime.now(JST)
 date = now.strftime("%Y%m%d")
-df_pubdetails = pd.read_csv(f"../data/{date}/{date}_pubdetails.csv", sep=",")
+# df_pubdetails = pd.read_csv(f"../data/{date}/{date}_pubdetails.csv", sep=",")
+df_pubdetails = pd.read_csv(f"../data/20221214/20221214_pubdetails.csv", sep=",")
 
 data_list =[]
+# Amphibians or Birds or Fishes or Mammals or Reptiles or Plants or Insecta
+species_category = []
 DATABASE = "../data/gem.db"
 con = sqlite3.connect(DATABASE)
 
@@ -35,7 +38,7 @@ for x in pmids_with_pmcid:
     substances = ast.literal_eval(substances)
     mesh_list = ast.literal_eval(mesh)
 
-    # 1. check substances
+    # 1. check substances for gene extraction
     substances_genes = [s for s in substances if "protein," in s]
     if substances_genes != []:
         print(f"substances_genes{substances_genes}")
@@ -77,6 +80,27 @@ for x in pmids_with_pmcid:
                     pass
                 else:
                     treeid = rs[0]
+                
+                # select if Amphibians
+                if treeid.startswith("B01.050.150.900.090"):
+                    species_category.append({"pmid": pmid, "species_category": "Amphibians"})
+                # select if Birds
+                if treeid.startswith("B01.050.150.900.248"):
+                    species_category.append({"pmid": pmid, "species_category": "Birds"})
+                # select if Fishes
+                if treeid.startswith("B01.050.150.900.493"):
+                    species_category.append({"pmid": pmid, "species_category": "Fishes"})
+                # select if Mammals
+                if treeid.startswith("B01.050.150.900.649"):
+                    species_category.append({"pmid": pmid, "species_category": "Mammals"})
+                # select if Reptiles
+                if treeid.startswith("B01.050.150.900.833"):
+                    species_category.append({"pmid": pmid, "species_category": "Reptiles"})
+                # select if Reptiles
+                if treeid.startswith("B01.050.500.131.617"):
+                    species_category.append({"pmid": pmid, "species_category": "Insecta"})
+                
+                # Extract Species names
                 if treeid.startswith("B") and len(treeid.split('.')) > 5:
                     cur2 = con.execute(f"select tax_id from taxonomy where tax_name like '{a_mesh}'")
                     rs2 = cur2.fetchone()
@@ -91,7 +115,7 @@ for x in pmids_with_pmcid:
 
     # 3. Use PubTator Central if no information from MeSH
     if tmp_datalist != []:
-        print("already obtained gene and specie. Loop continue..")
+        print("already obtained gene and species. Loop continue..")
         continue
     else:
         print("move to pubtator central process..")
@@ -330,6 +354,8 @@ for a_chunked_pmids in list_of_chunked_pmids:
                 print("no species or genes found for this pmid. loop continue..")
                 continue
 
+with open(f"/Users/suzuki/gem/csv_gitignore/{date}_species_categories.json", "w") as f:
+    json.dump(species_category, f, indent=3)
 
 df_g2p = pd.read_csv("../csv_gitignore/gene2pubmed.tsv", sep="\t")
 df_new = pd.DataFrame(data=data_list)

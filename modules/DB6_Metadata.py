@@ -4,12 +4,12 @@ import os
 
 
 dbname = "../data/gem.db"
-target_table_name = "metadata221017"
-import_table_name = "../20221017_metadata.csv"
+target_table_name = "metadata20221215"
+import_table_name = "../20221215_metadata.csv"
 is_create_table = True
 is_header_skip = True
 
-sql_script = """create table metadata221017(getool Text, pmid Text, pubtitle Text, pubdate Date, organism_name Text, genesymbol Text,  editing_type Text, gene_counts Integer, biopro_id Text, RNA_seq Text, vector Text, cellline Text, tissue Text, Mutation_type Text)"""
+sql_script = """create table metadata20221215(getool Text, pmid Text, pubtitle Text, pubdate Date, taxonomy_category Text, organism_name Text, genesymbol Text,  editing_type Text, gene_counts Integer, biopro_id Text, RNA_seq Text, vector Text, cellline Text, tissue Text, Mutation_type Text)"""
 
 class ImportSQLite():
     def __init__(self, dbname, target_table_name, import_data_name, is_create_table, is_header_skip=False, sql_create_table=None):

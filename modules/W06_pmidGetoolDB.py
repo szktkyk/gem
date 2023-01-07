@@ -10,12 +10,13 @@ import sqlite3
 DATABASE = "../data/gem.db"
 con = sqlite3.connect(DATABASE)
 
-t_delta = datetime.timedelta(hours=9)
-JST = datetime.timezone(t_delta, "JST")
-now = datetime.datetime.now(JST)
-date = now.strftime("%Y%m%d")
+# t_delta = datetime.timedelta(hours=9)
+# JST = datetime.timezone(t_delta, "JST")
+# now = datetime.datetime.now(JST)
+# date = now.strftime("%Y%m%d")
+date = "20221215"
 
-cur = con.execute("select distinct pmid from metadata221017")
+cur = con.execute(f"select distinct pmid from metadata{date}")
 rs = cur.fetchall()
 # print(rs)
 
@@ -25,7 +26,7 @@ for tuplepmid in rs:
     pmid = tuplepmid[0]
     # print(type(pmid))
 
-    cur2 = con.execute(f"select getool from metadata221017 where pmid ='{pmid}'")
+    cur2 = con.execute("select getool from metadata{} where pmid ='{}'".format(date,pmid))
     rs2 = cur2.fetchall()
     tmp = []
     for tuplegetools in rs2:
@@ -34,21 +35,21 @@ for tuplepmid in rs:
     tmp = sorted(tmp, key=lambda x: getool_order[x])
     tmp_str = ",".join(tmp)
     # print(tmp_str)
-    cur3 = con.execute(f"select pubtitle from metadata221017 where pmid = '{pmid}'")
+    cur3 = con.execute(f"select pubtitle from metadata{date} where pmid = '{pmid}'")
     pubtitle = cur3.fetchone()[0]
-    cur4 = con.execute(f"select biopro_id from metadata221017 where pmid = '{pmid}'")
+    cur4 = con.execute(f"select biopro_id from metadata{date} where pmid = '{pmid}'")
     bioproid = cur4.fetchone()[0]
-    cur5 = con.execute(f"select RNA_seq from metadata221017 where pmid = '{pmid}'")
+    cur5 = con.execute(f"select RNA_seq from metadata{date} where pmid = '{pmid}'")
     RNA_seq = cur5.fetchone()[0]
-    cur6 = con.execute(f"select vector from metadata221017 where pmid = '{pmid}'")
+    cur6 = con.execute(f"select vector from metadata{date} where pmid = '{pmid}'")
     vector = cur6.fetchone()[0]
-    cur7 = con.execute(f"select cellline from metadata221017 where pmid = '{pmid}'")
+    cur7 = con.execute(f"select cellline from metadata{date} where pmid = '{pmid}'")
     cellline = cur7.fetchone()[0]
-    cur8 = con.execute(f"select editing_type from metadata221017 where pmid = '{pmid}'")
+    cur8 = con.execute(f"select editing_type from metadata{date} where pmid = '{pmid}'")
     editing_type = cur8.fetchone()[0]
-    cur9 = con.execute(f"select tissue from metadata221017 where pmid = '{pmid}'")
+    cur9 = con.execute(f"select tissue from metadata{date} where pmid = '{pmid}'")
     tissue = cur9.fetchone()[0]
-    cur10 = con.execute(f"select Mutation_type from metadata221017 where pmid = '{pmid}'")
+    cur10 = con.execute(f"select Mutation_type from metadata{date} where pmid = '{pmid}'")
     Mutation_type = cur10.fetchone()[0]
 
 

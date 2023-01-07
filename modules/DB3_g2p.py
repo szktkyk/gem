@@ -5,19 +5,20 @@ import sqlite3
 import csv
 import os
 
-# Download gene2pubmed from ftp site to the local data directory
-# download_gene2pubmed()
-# # gunzip gene2pubmed
-# source_file = "../csv_gitignore/gene2pubmed.gz"
-# command = ["gunzip", source_file]
-# time.sleep(1)
-# subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-# time.sleep(1)
-# command = ["mv", "../csv_gitignore/gene2pubmed", "../csv_gitignore/gene2pubmed.tsv"]
-# subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+#Download gene2pubmed from ftp site to the local data directory
+download_gene2pubmed()
+# gunzip gene2pubmed
+time.sleep(1)
+source_file = "../csv_gitignore/gene2pubmed.gz"
+command = ["gunzip", source_file]
+time.sleep(1)
+subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+time.sleep(1)
+command = ["mv", "../csv_gitignore/gene2pubmed", "../csv_gitignore/gene2pubmed.tsv"]
+subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-# print("gene2pubmed is downloaded in the local data directory")
-
+print("gene2pubmed is downloaded in the local data directory")
+exit()
 
 
 dbname = "../data/gem.db"

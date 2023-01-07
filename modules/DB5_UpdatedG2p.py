@@ -8,7 +8,7 @@ import os
 
 dbname = "../data/gem.db"
 target_table_name = "updatedg2p"
-import_table_name = "../csv_gitignore/20221014_g2p_updated.tsv"
+import_table_name = "../csv_gitignore/20221215_g2p_updated.tsv"
 is_create_table = True
 is_header_skip = True
 

@@ -139,3 +139,4 @@ csv_gitignore
 log/
 modules/test*
 20221013_test_ge_metadata.csv
+modules_update/

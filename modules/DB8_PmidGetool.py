@@ -3,11 +3,11 @@ import sqlite3
 import pandas as pd
 import datetime
 
-t_delta = datetime.timedelta(hours=9)
-JST = datetime.timezone(t_delta, "JST")
-now = datetime.datetime.now(JST)
-date = now.strftime("%Y%m%d")
-
+# t_delta = datetime.timedelta(hours=9)
+# JST = datetime.timezone(t_delta, "JST")
+# now = datetime.datetime.now(JST)
+# date = now.strftime("%Y%m%d")
+date = "20221215"
 
 connection = sqlite3.connect("../data/gem.db")
 cursor = connection.cursor()

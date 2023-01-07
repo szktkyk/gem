@@ -5,7 +5,7 @@ import os
 
 dbname = "../data/gem.db"
 target_table_name = "pubdetails"
-import_table_name = "../data/20221013/20221013_pubdetails.csv"
+import_table_name = "../data/20221214/20221214_pubdetails.csv"
 is_create_table = True
 is_header_skip = True
 
