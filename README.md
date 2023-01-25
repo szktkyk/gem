@@ -1,6 +1,6 @@
 # Branch for development
 ## What is GEM?
-- GEM is the dataset of genome editing related metadata automatically extracted from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
+- GEM is a dataset of genome editing related metadata automatically extracted from PubMed literatures. Extraction of metadata is achieved by utilizing the following databases. 
     - PubMed
     - PubMed Central
     - NCBI gene
@@ -8,15 +8,19 @@
     - MeSH
     - NCBI taxonomy
 
-- `20221017_metadata.csv` is the outcome dataset. The dataset is visualized and searchable in your localhost if you execute `app.py`.
+- `20221017_metadata.csv` is the outcome dataset. 
+- We prepare the web interface (https://bonohu.hiroshima-u.ac.jp/gem) for users to search and retrieve metadata.
+<!-- - If you follow the instructions below, you can also build GEM interface in your localhost. -->
 
 
-## How to use interface in your local environment 
-1. install miniconda
-2. move to the gem directory
+<!-- ## How to use GEM interface in your local environment  -->
+<!-- 1. install miniconda
+2. move to the cloned gem directory
 3. `conda create -n gemenv --file env_package.txt`
 4. `conda activate gemenv`
-5. `python app.py` to start the web application in your localhost.
+5. `python modules_update/08_MetadataIntoDB.py`
+5. `python app.py` 
+6. you can start the web application in your localhost. -->
 
 
 ## Used data for metadata collection
@@ -24,11 +28,11 @@
 - gene2pubmed (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz) (downloaded at 2022-Oct-12)
 - mtrees2022.bin (https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/meshtrees/mtrees2022.bin) (downloaded at 2022-Oct-12)
 - new_taxdump (https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/) (downloaded at 2022-Jun-28)
-- PubTator central (used in calculation between 2022-Oct-14 - 2022-Oct-16)
+- PubTator central 
 
 
-## if you want to make your own dataset
-1. Write searching terms in pubmed_terms in `W01_Pubdetails.py`.
+<!-- ## if you want to make your own dataset -->
+<!-- 1. Write searching terms in pubmed_terms in `W01_Pubdetails.py`.
 2. Build DB by executing from `DB1_Geneinfo.py` to `DB4_Taxonomy.py`
 3. `python W01_Pubdetails.py`
 4. Insert pubdetails into DB by executing `DB7_Pubdetails.py`
@@ -38,5 +42,5 @@
 8. `python W05_CreateMetadata.py` to get the csv file containing metadata.
 9. Insert metadata into DB by executing `W05_MetadataIntoDB.py`
 10. Write a path to csv file in `app.py`.
-11. `python app.py` to see the csv data in localhost.
+11. `python app.py` to see the csv data in localhost. -->
 
