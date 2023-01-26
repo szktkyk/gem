@@ -18,7 +18,7 @@
 4. `conda create -n gemenv --file env_package.txt`
 5. `conda activate gemenv`
 6. `cd modules`
-7. `python modules/build_MetadataIntoDB.py`
+7. `python build_MetadataIntoDB.py`
 8. `cd ..`
 9. `python app.py` to start the web application in your localhost.
 10. Access `http://localhost:8000/` to open the GEM interface.
