@@ -14,19 +14,29 @@ con = sqlite3.connect(DATABASE)
 # JST = datetime.timezone(t_delta, "JST")
 # now = datetime.datetime.now(JST)
 # date = now.strftime("%Y%m%d")
-date = "20221215"
+date = "20230125"
 
 cur = con.execute(f"select distinct pmid from metadata{date}")
 rs = cur.fetchall()
 # print(rs)
 
-getool_order = {'CRISPR-Cas9': 0, 'TALEN': 1, 'ZFN': 2, 'CRISPR-Cas12': 3, 'CRISPR-Cas3':4, 'Base editor':5, 'Prime editor':6}
+getool_order = {
+    "CRISPR-Cas9": 0,
+    "TALEN": 1,
+    "ZFN": 2,
+    "CRISPR-Cas12": 3,
+    "CRISPR-Cas3": 4,
+    "Base editor": 5,
+    "Prime editor": 6,
+}
 getools = []
 for tuplepmid in rs:
     pmid = tuplepmid[0]
     # print(type(pmid))
 
-    cur2 = con.execute("select getool from metadata{} where pmid ='{}'".format(date,pmid))
+    cur2 = con.execute(
+        "select getool from metadata{} where pmid ='{}'".format(date, pmid)
+    )
     rs2 = cur2.fetchall()
     tmp = []
     for tuplegetools in rs2:
@@ -49,14 +59,30 @@ for tuplepmid in rs:
     editing_type = cur8.fetchone()[0]
     cur9 = con.execute(f"select tissue from metadata{date} where pmid = '{pmid}'")
     tissue = cur9.fetchone()[0]
-    cur10 = con.execute(f"select Mutation_type from metadata{date} where pmid = '{pmid}'")
+    cur10 = con.execute(
+        f"select Mutation_type from metadata{date} where pmid = '{pmid}'"
+    )
     Mutation_type = cur10.fetchone()[0]
 
-
-    getools.append({'pmid':pmid, 'getools':tmp_str,'pubtitle':pubtitle,'bioproid':bioproid,'RNA_seq':RNA_seq,'vector':vector,'cellline':cellline,'editing_type':editing_type,'tissue':tissue,'Mutation_type':Mutation_type})
+    getools.append(
+        {
+            "pmid": pmid,
+            "getools": tmp_str,
+            "pubtitle": pubtitle,
+            "bioproid": bioproid,
+            "RNA_seq": RNA_seq,
+            "vector": vector,
+            "cellline": cellline,
+            "editing_type": editing_type,
+            "tissue": tissue,
+            "Mutation_type": Mutation_type,
+        }
+    )
     # # print(tmp_str)
 
-with open(f"/Users/suzuki/gem/csv_gitignore/{date}_pmid_getools.json", "w") as f:
+with open(
+    f"/Users/suzuki/gem_backup_20230126/csv_gitignore/{date}_pmid_getools.json", "w"
+) as f:
     json.dump(getools, f, indent=3)
 
 # df_metadata = pd.DataFrame(getools)

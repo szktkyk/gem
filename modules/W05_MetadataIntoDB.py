@@ -2,7 +2,7 @@ import json
 import sqlite3
 import pandas as pd
 
-date = "20221215"
+date = "20230125"
 connection = sqlite3.connect("../data/gem.db")
 cursor = connection.cursor()
 cursor.execute(
@@ -31,7 +31,7 @@ columns = [
 
 for row in traffic:
     keys = tuple(row[c] for c in columns)
-    cursor.execute("insert into metadata20221215 values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", keys)
+    cursor.execute(f"insert into metadata{date} values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", keys)
     # print(f'{row["pubmed_id"]} data inserted Succefully')
 
 rs = cursor.execute(f"select distinct organism_name from metadata{date}")
@@ -45,11 +45,11 @@ for x in pre_species_list:
 #     print(a)
 # exit()
 
-cursor.execute("create table if not exists fig2 (taxonomyname Text, entries Integer)")
+cursor.execute(f"create table if not exists fig2 (taxonomyname Text, entries Integer)")
 
 for specie in species_list:
     try:
-        rs = cursor.execute(f"select count(*) from metadata221017 where organism_name = '{specie}'")
+        rs = cursor.execute(f"select count(*) from metadata{date} where organism_name = '{specie}'")
     except:
         print(f"syntax error at {specie}")
         continue

@@ -1,5 +1,5 @@
 ## What is GEM?
-- GEM is the dataset of genome editing related metadata automatically extracted from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
+- GEM is a dataset of genome editing related metadata automatically extracted from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
     - PubMed
     - PubMed Central
     - NCBI gene
@@ -7,15 +7,19 @@
     - MeSH
     - NCBI taxonomy
 
-- `{date}_metadata.csv` is the outcome dataset. The dataset is visualized and searchable in your localhost if you execute `app.py`.
+- `{date}_metadata.csv` is the outcome dataset. 
+- We prepare the web interface (https://bonohu.hiroshima-u.ac.jp/gem) for users to search and retrieve metadata.
 
 
-## How to use interface in your local environment 
+## How to use GEM interface in your local environment (Only tested for CPU architecture in arm64 and amd64)
 1. install miniconda
-2. move to the gem directory
-3. `conda create -n gemenv --file env_package.txt`
-4. `conda activate gemenv`
-5. `python app.py` to start the web application in your localhost.
+2. `git clone https://github.com/szktkyk/gem.git`
+3. move to the gem directory
+4. `conda create -n gemenv --file env_package.txt`
+5. `conda activate gemenv`
+6. `python modules/build_MetadataIntoDB.py`
+7. `python app.py` to start the web application in your localhost.
+8. Access `http://localhost:8000/` to open the GEM interface.
 
 
 ## Used data for metadata collection
@@ -26,7 +30,7 @@
 - taxidlineage (downloaded at 2022-Dec-12)
 
 
-## if you want to make your own dataset
+<!-- ## if you want to make your own dataset
 1. Write searching terms in pubmed_terms in `W01_Pubdetails.py`.
 2. Build DB by executing from `DB1_Geneinfo.py` to `DB4_Taxonomy.py`
 3. `python W01_Pubdetails.py`
@@ -37,5 +41,5 @@
 8. `python W05_CreateMetadata.py` to get the csv file containing metadata.
 9. Insert metadata into DB by executing `W05_MetadataIntoDB.py`
 10. Write a path to csv file in `app.py`.
-11. `python app.py` to see the csv data in localhost.
+11. `python app.py` to see the csv data in localhost. -->
 

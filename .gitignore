@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 .env
-data/
 gene_ref/
 genecounts/
 csv/names.csv

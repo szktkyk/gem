@@ -7,10 +7,11 @@ import datetime
 # JST = datetime.timezone(t_delta, "JST")
 # now = datetime.datetime.now(JST)
 # date = now.strftime("%Y%m%d")
-date = "20221215"
+date = "20230125"
 
 connection = sqlite3.connect("../data/gem.db")
 cursor = connection.cursor()
+cursor.execute("drop table pmid_getools")
 cursor.execute(
     "Create table pmid_getools (pmid Text, getools Text, pubtitle Text, bioproid Text, RNA_seq Text, vector Text, cellline Text, editing_type Text, tissue Text, Mutation_type Text)"
 )
@@ -37,5 +38,3 @@ for row in traffic:
 
 connection.commit()
 connection.close()
-
-
