@@ -131,7 +131,7 @@ for tuplepmid in rs:
     # # print(tmp_str)
 
 with open(
-    f"/Users/suzuki/gem/data/{date}_pmid_getools.json", "w"
+    f"../data/{date}_pmid_getools.json", "w"
 ) as f:
     json.dump(getools, f, indent=3)
 

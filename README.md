@@ -17,17 +17,18 @@
 3. move to the gem directory
 4. `conda create -n gemenv --file env_package.txt`
 5. `conda activate gemenv`
-6. `python modules/build_MetadataIntoDB.py`
-7. `python app.py` to start the web application in your localhost.
-8. Access `http://localhost:8000/` to open the GEM interface.
+6. `cd modules`
+7. `python modules/build_MetadataIntoDB.py`
+8. `cd ..`
+9. `python app.py` to start the web application in your localhost.
+10. Access `http://localhost:8000/` to open the GEM interface.
 
 
 ## Used data for metadata collection
 - gene_info.gz (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz) (downloaded at 2022-Oct-12)
 - gene2pubmed (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz) (downloaded at 2022-Dec-12)
 - mtrees2022.bin (https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/meshtrees/mtrees2022.bin) (downloaded at 2022-Oct-12)
-- new_taxdump (https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/) (downloaded at 2022-Jun-28)
-- taxidlineage (downloaded at 2022-Dec-12)
+- new_taxdump (https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/) (downloaded at 2022-Dec-12)
 
 
 <!-- ## if you want to make your own dataset

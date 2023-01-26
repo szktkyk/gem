@@ -73,7 +73,7 @@ def data_for_speciesfig_right(DATABASE):
     list_speciesfig_right = []
     con = sqlite3.connect(DATABASE)
     cur = con.execute(
-        "select distinct taxonomyname from fig2_20230125 order by entries desc"
+        "select distinct taxonomyname from fig2 order by entries desc"
     )
     pre_species_list = cur.fetchall()
     allspecies = []
@@ -109,7 +109,7 @@ def data_for_speciesfig_left(DATABASE):
     list_speciesfig_left = []
     con = sqlite3.connect(DATABASE)
     cur = con.execute(
-        "select distinct taxonomyname from fig2_20230125 order by entries desc"
+        "select distinct taxonomyname from fig2 order by entries desc"
     )
     pre_species_list = cur.fetchall()
     allspecies = []
