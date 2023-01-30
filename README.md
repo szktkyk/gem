@@ -11,11 +11,11 @@
 - We prepare the web interface (https://bonohu.hiroshima-u.ac.jp/gem) for users to search and retrieve metadata.
 
 
-## How to use GEM interface in your local environment (Only tested for CPU architecture in arm64 and amd64)
+## How to use GEM interface in your local environment 
 1. install miniconda
 2. `git clone https://github.com/szktkyk/gem.git`
 3. move to the gem directory
-4. `conda create -n gemenv --file env_package.txt`
+4. `conda create -n gemenv --file env_package.txt` for Mac OS, `conda create -n gemenv --file env_package_linux.txt` for Linux.
 5. `conda activate gemenv`
 6. `cd modules`
 7. `python build_MetadataIntoDB.py`
