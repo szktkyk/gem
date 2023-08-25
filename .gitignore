@@ -129,13 +129,16 @@ dmypy.json
 .pyre/
 
 .env
-gene_ref/
-genecounts/
-csv/names.csv
-csv/gene_info*
-csv/gene2pubmed*
-csv_gitignore
+data/
+csv_gitignore/
 log/
-modules/test*
-20221013_test_ge_metadata.csv
-modules_update/
+update_db/
+20230812_ge*
+20230819_ge*
+20230820_ge*
+20230822_*draft.json
+20230823_genesearch*
+test_*
+test2.json
+01_pubdetails_backup.py
+01_PubdetailsFromEdirect.py

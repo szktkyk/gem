@@ -1,46 +1,21 @@
-## What is GEM?
-- GEM is a dataset of genome editing related metadata automatically extracted from PubMed articles. Extraction of metadata is achieved by utilizing the following databases. 
+## GEM
+- It is a dataset of genome editing related metadata automatically extracted from PubMed articles. Extraction of metadata is achieved by utilizing the following databases and systems.
     - PubMed
     - PubMed Central
     - NCBI gene
-    - PubTator Central
+    - PubTator
     - MeSH
     - NCBI taxonomy
+    - EXTRACT 2.0 (https://extract.jensenlab.org/)
 
-- `{date}_metadata.csv` is the outcome dataset. 
+- `{date}_ge_metadata.csv` is the outcome dataset.
 - We prepare the web interface (https://bonohu.hiroshima-u.ac.jp/gem) for users to search and retrieve metadata.
 
-
-## How to use GEM interface in your local environment 
-1. install miniconda
-2. `git clone https://github.com/szktkyk/gem.git`
-3. move to the gem directory
-4. `conda create -n gemenv --file env_package.txt` for Mac OS, `conda create -n gemenv --file env_package_linux.txt` for Linux.
-5. `conda activate gemenv`
-6. `cd modules`
-7. `python build_MetadataIntoDB.py`
-8. `cd ..`
-9. `python app.py` to start the web application in your localhost.
-10. Access `http://localhost:8000/` to open the GEM interface.
-
+## Update 2023/8/22
+- We started using [EXTRACT 2.0](https://extract.jensenlab.org/)( doi: 10.1101/111088) for articles from which we could not extract metadata with NCBI related databases. 
+- 42,414 literatures with 86,348 metadata entries with 2,701 species are archived.
 
 ## Used data for metadata collection
-- gene_info.gz (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz) (downloaded at 2022-Oct-12)
-- gene2pubmed (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz) (downloaded at 2022-Dec-12)
-- mtrees2022.bin (https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/meshtrees/mtrees2022.bin) (downloaded at 2022-Oct-12)
+- gene_info.gz (https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz) (downloaded at 2023-Aug-16)
+- mtrees2023.bin (https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/meshtrees/mtrees2023.bin) (downloaded at 2023-Aug-16)
 - new_taxdump (https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/) (downloaded at 2022-Dec-12)
-
-
-<!-- ## if you want to make your own dataset
-1. Write searching terms in pubmed_terms in `W01_Pubdetails.py`.
-2. Build DB by executing from `DB1_Geneinfo.py` to `DB4_Taxonomy.py`
-3. `python W01_Pubdetails.py`
-4. Insert pubdetails into DB by executing `DB7_Pubdetails.py`
-5. `python W02_Update_Gene2pubmed.py`
-6. `sh W03_Modifyg2p.sh`
-7. Insert updated gene2pubmed into DB by executing `DB6_Metadata.py`
-8. `python W05_CreateMetadata.py` to get the csv file containing metadata.
-9. Insert metadata into DB by executing `W05_MetadataIntoDB.py`
-10. Write a path to csv file in `app.py`.
-11. `python app.py` to see the csv data in localhost. -->
-
