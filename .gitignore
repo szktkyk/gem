@@ -142,3 +142,9 @@ test_*
 test2.json
 01_pubdetails_backup.py
 01_PubdetailsFromEdirect.py
+modules_update/
+01_pubdetails_update.py
+concat_json.py
+20230917_ge_metadata.csv
+20230917_ge_metadata.json
+20230917_ge_metadata_all.json

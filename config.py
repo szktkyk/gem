@@ -8,15 +8,15 @@ JST = datetime.timezone(t_delta, "JST")
 now = datetime.datetime.now(JST)
 date = now.strftime("%Y%m%d")
 
-sql_table_name = "metadata20230820"
+sql_table_name = "metadata20230917"
 
 PATH = {
-    "pubdetails":"./data/publication_details/20230816_pubdetails.csv",
-    "gene_annotation":"./csv_gitignore/20230818_gene_annotations.csv",
-    "disease_annotation":"./csv_gitignore/20230818_disease_annotations.csv",
-    "tissue_annotation":"./csv_gitignore/20230818_tissue_annotations.csv",
-    "othermetadata":"./csv_gitignore/20230819_othermetadata.csv",
-    "metadata":"./20230822_ge_metadata.json",
+    "pubdetails":"./data/publication_details/20230917_pubdetails.csv",
+    "gene_annotation":"./csv_gitignore/20230917_gene_annotations.csv",
+    "disease_annotation":"./csv_gitignore/20230917_disease_annotations.csv",
+    "tissue_annotation":"./csv_gitignore/20230917_tissue_annotations.csv",
+    "othermetadata":"./csv_gitignore/20230917_othermetadata.csv",
+    "metadata":"./20230917_ge_metadata_all.json",
 }
 
 # URL = {}

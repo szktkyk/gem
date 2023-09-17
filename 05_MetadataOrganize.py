@@ -123,12 +123,18 @@ for pmid in pmids:
                 print(f"taxidlineage of {a_species} is not found")
                 taxonomy_category_str = "NotFound"
                 pass
+            # get taxonomy name
+            try:
+                species_name_cur = con.execute(f"select tax_name from taxonomy where tax_id = '{a_species}'")
+                species_name = species_name_cur.fetchone()[0]
+            except:
+                species_name = str(f"TaxonomyID:{a_species}")
             metadata = {
                         "getool": getool,
                         "pmid": pmid,
                         "pubtitle": pubtitle,
                         "pubdate": pubdate,
-                        "organism_name": a_species,
+                        "organism_name": species_name,
                         "taxonomy_category": taxonomy_category_str,
                         "genesymbol": gene,
                         "biopro_id": biopro_id,
