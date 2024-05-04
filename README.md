@@ -11,6 +11,7 @@
 - `{date}_ge_metadata.csv` is the outcome dataset.
 - We prepare the web interface (https://bonohu.hiroshima-u.ac.jp/gem) for users to search and retrieve metadata.
 
+
 ## Update 2023/8/22
 - We started using [EXTRACT 2.0](https://extract.jensenlab.org/)(doi: 10.1101/111088) for articles from which we could not extract metadata with NCBI related databases. 
 - 42,414 literatures with 86,348 metadata entries with 2,701 species are archived.

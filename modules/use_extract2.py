@@ -1,32 +1,27 @@
 import requests
-import sys
 
-
-def use_extract2(id_for_extract:str, con):
-    print(f"pmid in use_extract function: {id_for_extract}")
-    for_join = []
-    title_cur = con.execute(f"select title from tmp_pubdetails where pmid = '{id_for_extract}'")
-    for_join.append(title_cur.fetchone()[0])
-    abstract_cur = con.execute(f"select abstract from tmp_pubdetails where pmid = '{id_for_extract}'")
-    for_join.append(abstract_cur.fetchone()[0])
-    input = ",".join(for_join)
+def use_extract2(id_for_extract:str, df):
+    # print(f"pmid in use_extract function: {id_for_extract}")
+    input = ""
+    df_row = df.filter(df["pmid"] == id_for_extract)
+    input += str(df_row["title"][0])
+    input += str(df_row["abstract"][0])
 
     extract_url = f"http://tagger.jensenlab.org/GetEntities?document={input}&entity_types=9606+-2+-25+-26+-27&format=tsv"
-    
     # extract_url = f"http://tagger.jensenlab.org/GetEntities?document={input}&format=tsv"
-    print(extract_url)
+    # print(extract_url)
     try:
         req = requests.get(extract_url)
         req.raise_for_status()
     except:
         print("error at extract2.0 API.")
-        return [], [], []
+        return [], [], [],[],[]
 
     extracted = req.text
     content = extracted.split("\n")
     if content == [''] or content[0].startswith("<?xml"):
         print("no results in extract2.0.")
-        return [], [], []
+        return [], [], [], [],[]
     print(f"extracted_words:{content}")
     # 出力されるtsvの真ん中の列の数字によってその単語が何に分類されるかを判断する
     # -2だと生物種
@@ -36,8 +31,9 @@ def use_extract2(id_for_extract:str, con):
     disease = []
     tissue = []
     species = []
-    genes = []
-    metadata = []
+    genes_human = []
+    genes_other = []
+    not_focus = ['-27','-21','-22','-23','-1']
     for item in content:
         l = item.split("\t")
         if l[1] == '-26':
@@ -50,62 +46,18 @@ def use_extract2(id_for_extract:str, con):
             species.append(l[2])
             continue
         if l[1] == '9606':
-            genes.append(l[0])
-            species.append(l[1])
+            genes_human.append(l[2])
             continue
-        if l[1] == '-27':
-            print(f"-27:{l}")
+        if l[1] in not_focus:
             continue
+
         else:
-            try:
-                genes.append(l[0])
-            except:
-                print(f"no results in extract2.0. next loop.{l}")
-                continue
+            genes_other.append({"gene":l[0],"species":l[1]})
+
     species = list(set(species))
-    genes = list(set(genes))
+    genes_human = list(set(genes_human))
+    # genes_other = list(set(genes_other))   
 
-    for a_species in species:
-        for a_gene in genes:
-            try:
-                cur = con.execute("select GeneID from gene_info where tax_id = '{}' and UPPER(Symbol) like UPPER('{}')".format(a_species,a_gene))
-            except:
-                print(f"syntax error at {a_gene}. Keep the loop going. next loop.")
-                geneid = "NotFound"
-                continue
-            rs = cur.fetchone()
-            if rs == None:
-                # print("no pair for {} and {}".format(a_species,a_gene))
-                continue
-            else:
-                geneid = rs[0]
-            metadata.append({"pmid":id_for_extract, "species":a_species, "gene":geneid,})
+    return genes_human, genes_other, species, disease, tissue
 
-    if metadata == [] and genes == [] and species != []:
-        for a_species in species:
-            metadata.append({"pmid":id_for_extract, "species":a_species, "gene":"NotFound",})
-    
-    return metadata, disease, tissue
-        # try:
-        #     a_gene = l[0]
-        #     a_species = l[1]
-        # except:
-        #     print("no results in extract2.0. next loop.")
-        #     geneid = "NotFound"
-        #     a_species = "NotFound"
-        #     continue
-        # try:
-        #     cur = con.execute("select GeneID from gene_info where tax_id = '{}' and UPPER(Symbol) like UPPER('{}')".format(a_species,a_gene))
-        # except:
-        #     print(f"syntax error at {a_gene}. Keep the loop going. next loop.")
-        #     geneid = "NotFound"
-        #     continue
-        # rs = cur.fetchone()
-        # if rs == None:
-        #     print("no pair for {} and {}".format(a_species,a_gene))
-        #     geneid = "NotFound"
-        #     a_species = "NotFound"
-        #     continue
-        # else:
-        #     geneid = rs[0]
-    # return geneid, a_species
+  
