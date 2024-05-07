@@ -13,12 +13,12 @@ updated_date = "2024-05-08"
 
 PATH = {
     "pubdetails":"./data/publication_details/20240504_pubdetails.csv",
-    "gene_annotation":"./csv_gitignore/20240505_gene_annotations.csv",
-    "disease_annotation":"./csv_gitignore/20240505_disease_annotations.csv",
-    "tissue_annotation":"./csv_gitignore/20240505_tissue_annotations.csv",
-    "othermetadata":"./csv_gitignore/20240505_othermetadata.csv",
-    "metadata":"./20240505_ge_metadata_all.json",
-    "metadata_csv": "20240505_ge_metadata.csv"
+    "gene_annotation":"./data/csv_gitignore/20240507_gene_annotations.csv",
+    "disease_annotation":"./data/csv_gitignore/20240504_disease_annotations.csv",
+    "tissue_annotation":"./data/csv_gitignore/20240504_tissue_annotations.csv",
+    "othermetadata":"./data/csv_gitignore/20240507_othermetadata.csv",
+    "metadata":"20240507_ge_metadata_all.json",
+    "metadata_csv": "20240507_ge_metadata.csv"
 }
 
 

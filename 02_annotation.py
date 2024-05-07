@@ -1,7 +1,7 @@
 # 47000文献を処理したら2日間くらいのイメージ
 import config
 import polars as pl
-from modules import eutils, use_extract2, ncbi_datasets as nd, pubtator, match
+from modules import eutils, use_extract2, ncbi_datasets as nd, pubtator, match, read_log, check_results
 import ast
 import sqlite3
 import csv
@@ -12,15 +12,19 @@ def main():
     df = pl.read_csv(config.PATH["pubdetails"])
     pmids_list = df["pmid"].to_list()
     print(f"The number of pmids: {len(pmids_list)}")
-
+    pmids_list = check_results.get_pmids_from_geneann()
+    print(f"The number of pmids from geneann: {len(pmids_list)}")
+    
     list_of_chunked_pmids = eutils.generate_chunked_id_list(pmids_list, 100)
     extracted_genes = []
     extracted_disease = []
     extracted_tissue = []
-    # results = Parallel(n_jobs=-1)(delayed(get_annotation)(a_chunked_pmids,df) for a_chunked_pmids in list_of_chunked_pmids)
-        # for result in results:
     for a_chunked_pmids in list_of_chunked_pmids:
+        # 下記の1行はテスト用、あとで削除する
+        # a_chunked_pmids = [37127332]
         results = get_annotation(a_chunked_pmids, df)
+        # print(results)
+        # exit()
         extracted_genes.extend(results["extracted_genes"])
         extracted_disease.extend(results["extracted_disease"])
         extracted_tissue.extend(results["extracted_tissue"])
@@ -29,7 +33,7 @@ def main():
     field_name_disease = ["pmid","disease",]
     field_name_tissue = ["pmid","tissue",]
     with open(
-        f"./data/csv_gitignore/{config.date}_gene_annotations.csv",
+        f"./data/csv_gitignore/{config.date}_gene_annotations_5th.csv",
         "w",
     ) as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_name_gene)
@@ -37,7 +41,7 @@ def main():
         writer.writerows(extracted_genes)
 
     with open(
-        f"./data/csv_gitignore/{config.date}_disease_annotations.csv",
+        f"./data/csv_gitignore/{config.date}_disease_annotations_5th.csv",
         "w",
     ) as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_name_disease)
@@ -45,7 +49,7 @@ def main():
         writer.writerows(extracted_disease)
 
     with open(
-        f"./data/csv_gitignore/{config.date}_tissue_annotations.csv",
+        f"./data/csv_gitignore/{config.date}_tissue_annotations_5th.csv",
         "w",
     ) as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_name_tissue)
@@ -99,25 +103,26 @@ def get_annotation(a_chunked_pmids, df):
                 splited = a_substance.split(",")
                 taxname = splited[1].lstrip()
                 protein = splited[0]
-                # ncbi_datasetsでマウスが取得できなかった。。
-                # taxid = nd.get_taxid_from_taxname(taxname)
-                cur = con.execute(f"select tax_id from taxonomy where tax_name like '{taxname}'")
-                rs = cur.fetchone()
-                if rs == None:
-                    print(f"error at obtaining taxid for {taxname} from substances. next loop.")
-                    continue
-                else:
-                    taxid = rs[0]
-                print(f"substances_taxid:{taxid}")
-                gene = protein.split()[0]
-                geneid = nd.get_geneid_from_genesymbol(gene,taxid)
 
-                extracted_genes.append({"pmid":pmid,"species": taxid, "gene": geneid})
-                tmp2.append({"pmid":pmid,"species": taxid, "gene": geneid})
-                print({"pmid":pmid,"species": taxid, "gene": geneid})
+                try:
+                    cur = con.execute(f"select tax_id from taxonomy where tax_name like '{taxname}'",)
+                    rs = cur.fetchone()
+                    if rs == None:
+                        print(f"No taxid for {taxname} from substances. Go to next substances.")
+                        continue
+                    else:
+                        taxid = rs[0]
+                        # print(taxid)  
+                    gene = protein.split()[0]
+                    geneid = nd.get_geneid_from_genesymbol(gene,taxid)          
+                    extracted_genes.append({"pmid":pmid,"species": taxid, "gene": geneid})
+                    tmp2.append({"pmid":pmid,"species": taxid, "gene": geneid})
+                    print({"pmid":pmid,"species": taxid, "gene": geneid})
+                except:
+                    print(f"error at obtaining taxid from substances. Go to next substances.")
 
         else:
-            print("no substances genes found for this pmid. keep the loop going.")
+            print("no substances_genes. Go to the MeSH part..")
             pass
 
         # 2. MeSHを確認
@@ -133,11 +138,21 @@ def get_annotation(a_chunked_pmids, df):
                     treeid = rs[0]
 
                 if treeid.startswith("B") and len(treeid.split('.')) > 5:
-                    taxid = nd.get_taxid_from_taxname(a_mesh)
-                    if taxid != "NotFound":
-                        tmp_species.append(taxid)
-                    else:
-                        pass
+                    try:
+                        cur = con.execute(f"select tax_id from taxonomy where tax_name like '{a_mesh}'")
+                        rs = cur.fetchone()
+                        if rs == None:
+                            print(f"error at obtaining taxid for {a_mesh} from MeSH. Go to next MeSH term.")
+                            continue
+                        else:
+                            taxid = rs[0]
+                        if taxid != None:
+                            tmp_species.append(taxid)
+                        else:
+                            pass
+                    except:
+                        print(f"error at obtaining taxid from MeSH. Go to next MeSH term")
+                        continue
             print(f"species from mesh_part: {tmp_species}")
         else:
             print("no species from the mesh found for this pmid. keep the loop going.")
@@ -179,29 +194,66 @@ def get_annotation(a_chunked_pmids, df):
             annotations_title = pubtator.get_annotation_from_section(element, "title")
             if annotations_title != None:
                 for a in annotations_title:
-                    if a.find("infon[@key='type']").text == "Species":
+                    if a.find("infon[@key='type']").text == "Species" and a.find("infon[@key='identifier']") != None:
+                        pt_taxid_title = a.find("infon[@key='identifier']").text
+                        if ";" in pt_taxid_title:
+                            pt_taxid_title = pt_taxid_title.split(";")[0]
+                            tmp_species.append(pt_taxid_title)
+                        else:
+                            tmp_species.append(pt_taxid_title)
+                    elif a.find("infon[@key='type']").text == "Species" and a.find("infon[@key='identifier']") == None:
+                        pt_taxname = a.find("text").text
                         try:
-                            tmp_species.append(a.find("infon[@key='identifier']").text)
+                            cur = con.execute(f"select tax_id from taxonomy where tax_name like '{pt_taxname}'")
+                            rs = cur.fetchone()
+                            if rs == None:
+                                print(f"error at obtaining taxid for {pt_taxname} from pubtator..")
+                                continue
+                            else:
+                                pt_taxid = rs[0]
+                            if pt_taxid != None:
+                                tmp_species.append(pt_taxid)
                         except:
+                            print(f"error at obtaining taxid for {pt_taxname} from pubtator..")
                             continue
                     else:
                         continue
+
             else:
                 pass
             # 4-2. タイトルとMeSHで取れていない場合にアブストも使う
             if tmp_species == []:
                 annotations_abstract = pubtator.get_annotation_from_section(element, "abstract")
                 for b in annotations_abstract:
-                    if b.find("infon[@key='type']").text == "Species":
+                    if b.find("infon[@key='type']").text == "Species" and b.find("infon[@key='identifier']") != None:
+                        pt_taxid_abst = b.find("infon[@key='identifier']").text
+                        if ";" in pt_taxid_abst:
+                            pt_taxid_abst = pt_taxid_abst.split(";")[0]
+                            tmp_species.append(pt_taxid_abst)
+                        else:
+                            tmp_species.append(pt_taxid_abst)
+                    elif b.find("infon[@key='type']").text == "Species" and b.find("infon[@key='identifier']") == None:
+                        pt_taxname = b.find("text").text
                         try:
-                            tmp_species.append(b.find("infon[@key='identifier']").text)
+                            cur = con.execute(f"select tax_id from taxonomy where tax_name like '{pt_taxname}'")
+                            rs = cur.fetchone()
+                            if rs == None:
+                                print(f"error at obtaining taxid for {pt_taxname} from pubtator..")
+                                continue
+                            else:
+                                pt_taxid = rs[0]
+                            if pt_taxid != None:
+                                tmp_species.append(pt_taxid)
                         except:
+                            print(f"error at obtaining taxid for {pt_taxname} from pubtator..")
                             continue
+                    else:
+                        continue
             else:
                 pass
-
             # 4-3. 遺伝子、疾患、細胞種について全てのアノテーションを取得
-            tmp_genes, disease, cellline = pubtator.get_annotation_ptc(element)
+            tmp_genes_pt, disease, cellline = pubtator.get_annotation_ptc(element)
+            tmp_genes.extend(tmp_genes_pt)
             if disease != []:
                 extracted_disease.append({"disease":disease,"pmid":pmid})
                 print({"disease":disease,"pmid":pmid})  
@@ -234,7 +286,8 @@ def get_annotation(a_chunked_pmids, df):
         else:
             continue
         
-        results = {"extracted_genes":extracted_genes,"extracted_disease":extracted_disease,"extracted_tissue":extracted_tissue}
+    results = {"extracted_genes":extracted_genes,"extracted_disease":extracted_disease,"extracted_tissue":extracted_tissue}
+
     return results
 
 

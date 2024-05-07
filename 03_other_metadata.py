@@ -3,7 +3,7 @@ import polars as pl
 import config
 import csv
 import sqlite3
-from modules import parsing
+from modules import parsing, read_log, check_results
 
 con = sqlite3.connect("./data/gem.db")
 
@@ -89,8 +89,10 @@ def main():
     df = pl.read_csv(config.PATH["pubdetails"])
     pmids = df["pmid"].to_list()
     print(f"the number of pmids are {len(pmids)}")
+      
     othermetadata_list = []
-    # pmids = [str(i) for i in pmids]
+    
+    pmids = [str(i) for i in pmids]
     for pmid in pmids:
         print(f"\npmid....: {pmid}")
         df_row = df.filter(df["pmid"] == pmid)

@@ -3,12 +3,17 @@ import config
 import config
 import json
 import sqlite3
-from modules import ncbi_datasets as nd
+from modules import ncbi_datasets as nd, check_results
 import ast
 from nltk.stem import PorterStemmer
 
 con = sqlite3.connect("./data/gem.db")
 stemmer = PorterStemmer()
+
+# 下記1行でgene_annotationsのエラーを修正した。
+# check_results.correct_gene_annotation()
+# exit()
+
 
 df_pubdetails = pl.read_csv(config.PATH["pubdetails"])
 df_gene_annotation = pl.read_csv(config.PATH["gene_annotation"])
@@ -25,6 +30,8 @@ print(f"the number of pmids are {len(pmids)}")
 
 for pmid in pmids:
     print(f"\npmid:{pmid}.....")
+    # # 下記はテストなので後で削除
+    # pmid = "30967334"
     # それぞれのdfの行を取得
     pmid_row_pubdeitals = df_pubdetails.filter(df_pubdetails["pmid"] == pmid)
     pmid_row_othermetadata = df_othermetadata.filter(df_othermetadata["pmid"] == pmid)
@@ -124,8 +131,11 @@ for pmid in pmids:
         species = species_row["species"].to_list()
         species = list(set(species))
         for a_species in species:
-            taxidlineage_cur = con.execute(f"select taxids from taxidlineage where id = ?", (a_species,))
-            taxidlineage = taxidlineage_cur.fetchone()[0]
+            try:
+                taxidlineage_cur = con.execute(f"select taxids from taxidlineage where id = ?", (a_species,))
+                taxidlineage = taxidlineage_cur.fetchone()[0]
+            except:
+                taxidlineage = str(a_species)
             taxonomy_category = []
             if " 8292 " in taxidlineage or a_species == "8292":
                 taxonomy_category.append("amphibians")

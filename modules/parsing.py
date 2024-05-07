@@ -129,6 +129,7 @@ def parse_section_pmc(tree: str, section: str) -> list:
 
     return section_fulltext_list
 
+
 def parse_getool(texts:str):
     getools = []
     for parse_pattern in config.parse_patterns.items():

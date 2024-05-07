@@ -78,16 +78,16 @@ def get_taxid_from_geneid(geneid):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
-    req_gene = json.loads(req2.stdout.decode())
-    if req_gene["total_count"] == 0:
-        print("no taxid from geneid...")
+    try:
+        req_gene = json.loads(req2.stdout.decode())
+        if req_gene["total_count"] == 0:
+            print("no taxid from geneid...")
+            taxid = "NotFound"
+        else:
+            taxid = req_gene["reports"][0]["gene"]["tax_id"]
+    except:
+        print("error at taxid from geneid...")
         taxid = "NotFound"
-    elif "warning" in req_gene["reports"][0] and req_gene["reports"][0]["warning"]:
-        print(req_gene)
-        print("no taxid from geneid...")
-        taxid = "NotFound"
-    else:
-        taxid = req_gene["reports"][0]["gene"]["tax_id"]
     return taxid
 
 def ensg2ncbi(ensg):
