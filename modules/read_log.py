@@ -52,8 +52,8 @@ def get_pmids_from_log03(logfilepath):
 
 def get_pmids_from_log_substances(logfilepath):
     """
-    substancesでtaxidが取れない場合に、geneをtmp_genesに入れたかったが、それを忘れてしまった。
-    そのため、logファイルからpmidを取得する関数を作成した。
+    I wanted to put genes in tmp_genes when taxid was not obtained in substances, but I forgot to do so.
+    So I created a function to get pmid from the log file.
     """
     pmids = []
     with open(logfilepath, 'r') as f:

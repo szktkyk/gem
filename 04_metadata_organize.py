@@ -5,15 +5,13 @@ import json
 import sqlite3
 from modules import ncbi_datasets as nd, check_results
 import ast
-from nltk.stem import PorterStemmer
+# from nltk.stem import PorterStemmer
+# stemmer = PorterStemmer()
+
+check_results.check_duplicate()
+exit()
 
 con = sqlite3.connect("./data/gem.db")
-stemmer = PorterStemmer()
-
-# 下記1行でgene_annotationsのエラーを修正した。
-# check_results.correct_gene_annotation()
-# exit()
-
 
 df_pubdetails = pl.read_csv(config.PATH["pubdetails"])
 df_gene_annotation = pl.read_csv(config.PATH["gene_annotation"])
@@ -31,7 +29,7 @@ print(f"the number of pmids are {len(pmids)}")
 for pmid in pmids:
     print(f"\npmid:{pmid}.....")
     # # 下記はテストなので後で削除
-    # pmid = "30967334"
+    # pmid = "37321037"
     # それぞれのdfの行を取得
     pmid_row_pubdeitals = df_pubdetails.filter(df_pubdetails["pmid"] == pmid)
     pmid_row_othermetadata = df_othermetadata.filter(df_othermetadata["pmid"] == pmid)
@@ -73,10 +71,10 @@ for pmid in pmids:
     if diseases == []:
         diseases_str = "NotFound"
     else:
-        # stemmerで語幹に変換
-        diseases_stemmed = [stemmer.stem(word) for word in diseases]
-        diseases_stemmed = list(set(diseases_stemmed))
-        diseases_str = ",".join(diseases_stemmed)
+        # 全て小文字に変換
+        diseases = [word.lower() for word in diseases]
+        diseases = list(set(diseases))
+        diseases_str = ",".join(diseases)
     
     # cellline + tissueの情報
     cellline = ast.literal_eval(pmid_row_othermetadata["cellline"][0])
@@ -89,10 +87,10 @@ for pmid in pmids:
     if tissue_cellline == []:
         tissue_cellline_str = "NotFound"
     else:
-        # stemmerで語幹に変換
-        tissuecellline_stemmed = [stemmer.stem(word) for word in tissue_cellline]
-        tissuecellline_stemmed = list(set(tissuecellline_stemmed))
-        tissue_cellline_str = ",".join(tissuecellline_stemmed)
+        # 全て小文字に変換
+        tissue_cellline = [word.lower() for word in tissue_cellline]
+        tissue_cellline = list(set(tissue_cellline))
+        tissue_cellline_str = ",".join(tissue_cellline)
     
     # ID関連の情報
     biopro_id = pmid_row_othermetadata["biopro_id"][0]
@@ -209,10 +207,10 @@ for i in metadata_list:
 print(f"new_metadata_list:{len(new_metadata_list)}")
 
 
-with open(f"{config.date}_ge_metadata.json", "w") as f:
+with open(f"./data/csv_gitignore/{config.date}_ge_metadata.json", "w") as f:
     json.dump(new_metadata_list, f, indent=3)
 df_metadata = pl.DataFrame(new_metadata_list)
-df_metadata.write_csv(f"{config.date}_ge_metadata.csv")
+df_metadata.write_csv(f"./data/csv_gitignore/{config.date}_ge_metadata.csv")
     
 
 

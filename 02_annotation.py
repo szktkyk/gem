@@ -1,4 +1,4 @@
-# 47000文献を処理したら2日間くらいのイメージ
+# About 2 DAYS for 47000 articles
 import config
 import polars as pl
 from modules import eutils, use_extract2, ncbi_datasets as nd, pubtator, match, read_log, check_results
@@ -20,11 +20,7 @@ def main():
     extracted_disease = []
     extracted_tissue = []
     for a_chunked_pmids in list_of_chunked_pmids:
-        # 下記の1行はテスト用、あとで削除する
-        # a_chunked_pmids = [37127332]
         results = get_annotation(a_chunked_pmids, df)
-        # print(results)
-        # exit()
         extracted_genes.extend(results["extracted_genes"])
         extracted_disease.extend(results["extracted_disease"])
         extracted_tissue.extend(results["extracted_tissue"])
@@ -64,7 +60,8 @@ def get_annotation(a_chunked_pmids, df):
     extracted_tissue = []
     a_chunked_pmids = [str(i) for i in a_chunked_pmids]
     pmids_str = ",".join(a_chunked_pmids)
-    # full-textsを最後につけるとPMCのアノテーションが取れるが、今回はtitleとabstractのみなので不要。
+    # if add "full-texts" at the end of the url, you can get the full-texts of the articles.
+    # but this time, only title and abstract are used. so it's not necessary.
     pt_url = f"https://www.ncbi.nlm.nih.gov/research/pubtator3-api/publications/export/biocxml?pmids={pmids_str}"
     print(f"\nnew pt_url:{pt_url}")
     try:
@@ -72,7 +69,7 @@ def get_annotation(a_chunked_pmids, df):
     except:
         print(f"Pubtator api error at {pt_url}.")
         pass
-    # pubtatorで取得できなかったIDを抽出. あとでextract2で処理する。
+    # categorize the pmids into two groups: one for extract2.0 and the other for pubtator
     pt_pmids = []
     for element in tree_pubtator.findall("./document"):
         tmp_pmid = element.find("id").text
@@ -81,10 +78,10 @@ def get_annotation(a_chunked_pmids, df):
     print(f"pmids for extract2 : {len(go_to_extract)}")
     print(f"pmids for pubtator : {len(pt_pmids)}")
 
-    # substancesとMeSHパートは、全てのPMIDを処理する
+    # all pmids processing for substances and mesh
     for pmid in a_chunked_pmids:
         print(f"\npmid:{pmid}....")
-        # pmidごとの一時リストを定義
+        # temporary lists for each pmid
         tmp_species = []
         tmp_genes = []
         tmp2 = []
@@ -95,7 +92,7 @@ def get_annotation(a_chunked_pmids, df):
         substances = ast.literal_eval(substances)
         mesh_list = ast.literal_eval(mesh)
 
-        # 1. substancesを確認
+        # 1. Check Substances
         substances_genes = [s for s in substances if "protein," in s]
         if substances_genes != []:
             print(f"substances_genes{substances_genes}")
@@ -125,8 +122,7 @@ def get_annotation(a_chunked_pmids, df):
             print("no substances_genes. Go to the MeSH part..")
             pass
 
-        # 2. MeSHを確認
-        # ここは潔くSQLで処理する
+        # 2. Check MeSH
         if mesh_list != []:
             for a_mesh in mesh_list:
                 cur = con.execute(f"select mesh_number from mtree where mesh_term = ?", (a_mesh,))
@@ -158,7 +154,7 @@ def get_annotation(a_chunked_pmids, df):
             print("no species from the mesh found for this pmid. keep the loop going.")
             pass
 
-        # 3. PubTatorにない文献について、EXTRACT2.0で処理する
+        # 3. EXTRACT2.0
         if pmid in go_to_extract:
             print(f"pmid:{pmid} working on EXTRACT2.0...")
             genes_human, genes_other, species_ext, disease_ext, tissue_ext = use_extract2.use_extract2(pmid,df)
@@ -177,7 +173,6 @@ def get_annotation(a_chunked_pmids, df):
                 tmp2.append({"pmid":pmid,"species": d_species, "gene": geneid_oth})
                 print({"pmid":pmid,"species": d_species, "gene": geneid_oth})
             
-            # speciesをtmp_speciesに追加
             tmp_species.extend(species_ext)
             if disease_ext != []:
                 extracted_disease.append({"disease":disease_ext,"pmid":pmid})
@@ -186,11 +181,11 @@ def get_annotation(a_chunked_pmids, df):
                 extracted_tissue.append({"tissue":tissue_ext,"pmid":pmid})
                 print({"tissue":tissue_ext,"pmid":pmid})         
         
-        # 4. PubTatorの処理
+        # 4. PubTator
         elif pmid in pt_pmids:
             print(f"pmid:{pmid} working on PubTator...")
             element = tree_pubtator.find(f"./document[id='{pmid}']")
-            # 4-1. タイトルから生物種の確認をする
+            # 4-1. Check Species from TITLE
             annotations_title = pubtator.get_annotation_from_section(element, "title")
             if annotations_title != None:
                 for a in annotations_title:
@@ -221,7 +216,8 @@ def get_annotation(a_chunked_pmids, df):
 
             else:
                 pass
-            # 4-2. タイトルとMeSHで取れていない場合にアブストも使う
+            
+            # 4-2. Check Species from ABSTRACT (if tmp_species = [])
             if tmp_species == []:
                 annotations_abstract = pubtator.get_annotation_from_section(element, "abstract")
                 for b in annotations_abstract:
@@ -251,7 +247,8 @@ def get_annotation(a_chunked_pmids, df):
                         continue
             else:
                 pass
-            # 4-3. 遺伝子、疾患、細胞種について全てのアノテーションを取得
+            
+            # 4-3. Check Genes, Diseases, Celltypes
             tmp_genes_pt, disease, cellline = pubtator.get_annotation_ptc(element)
             tmp_genes.extend(tmp_genes_pt)
             if disease != []:
@@ -263,7 +260,7 @@ def get_annotation(a_chunked_pmids, df):
                 print({"tissue":cellline,"pmid":pmid})
             
 
-        # 5-1. 遺伝子と生物種についてマッチング処理
+        # 5-1. Gene and Species MATCHING
         tmp_genes = list(set(tmp_genes)) 
         tmp_genes = [x for x in tmp_genes if x != "NotFound"]   
         print(f"tmp_genes:{tmp_genes}")
@@ -272,7 +269,7 @@ def get_annotation(a_chunked_pmids, df):
         extracted_genes.extend(mt_genes)
         tmp2.extend(mt_genes)       
 
-        # 5-2. もし何もマッチしない場合は生物種のみエントリーに含める
+        # 5-2. If no match at all, add species to metadata
         if len(tmp2) < 2 and mt_species != []:
             extracted_genes.append({"pmid":pmid,"species": mt_species[0], "gene": "NotFound"})
             print({"pmid":pmid,"species": mt_species[0], "gene": "NotFound"})     

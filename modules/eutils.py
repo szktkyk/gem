@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 def call_esearch(query_str: str, mindate:int) -> ET.Element:
     """
-    10000件までしか取れないので、mindateを指定して、1年ずつPMIDを取得する
+    get pmids by each year (as 10000 items at most)
 
     Parameters:
     ------

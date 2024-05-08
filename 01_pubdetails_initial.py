@@ -1,5 +1,3 @@
-#TODO: requestsのエラーハンドリング必要そう？
-
 from modules import eutils
 import config
 import csv
@@ -9,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def main():  
-    # 新しいPMIDリストを取得
+    # obtain new pmids list
     years_list = [str(x) for x in range(1990, 2024)]  
     new_pmids_list = []
     for year in years_list:

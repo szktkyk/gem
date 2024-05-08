@@ -8,12 +8,11 @@ from modules import parsing, read_log, check_results
 con = sqlite3.connect("./data/gem.db")
 
 def parse_part1(pmid, df_row, con):
-    # MeSHの取得
+    # MeSH
     mesh = df_row["mesh"][0]          
     mesh_list = ast.literal_eval(mesh)
 
-    # MeSHからcellline, tissue, mutation, diseaseを取得
-    # MeSH処理はローカルでSQLで行うのが早そう
+    # cellline, tissue, mutation, disease from MeSH
     cellline = []
     tissue = []
     mutation = []
@@ -43,13 +42,13 @@ def parse_part1(pmid, df_row, con):
 
 
 def parse_part2(pmcid, df_row):
-    # getoolの処理
+    # getool
     getool = df_row["getools"][0]
     getool_list = ast.literal_eval(getool)
     
     if pmcid == "Not found":
         print("pmcid not found")
-        # abstractのみで処理
+        # Only abstract is available
         abstract = df_row["abstract"][0]
         if type(abstract) == str:
             bioproid_list = parsing.parse_bioproid(abstract)
@@ -66,7 +65,7 @@ def parse_part2(pmcid, df_row):
             bioproid_method = parsing.parse_bioproid(methods_str)
             bioproid_suppl = parsing.parse_bioproid(dataavailability_str)
             bioproid_list = list(set(bioproid_method + bioproid_suppl))
-            # TODO addgeneをどうするか考える
+            # TODO work on ADDGENE???
             # addgene = parse_addgene(
             #     methods_str, "/Users/suzuki/gem/csv/addgene_vector2.csv"
             # )
@@ -102,7 +101,7 @@ def main():
 
         bioproid_list, geoid_list, getool_list = parse_part2(pmcid, df_row)
       
-        # ID関連の処理
+        # related IDs
         bioproid_list = list(set(bioproid_list))
         if bioproid_list == []:
             bioproid = "NotFound"

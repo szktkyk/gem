@@ -9,11 +9,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def main():
-    # # 現状のPMIDリストを取得
+    # current pmids list
     with open(config.old_pubdetails) as file:
         last_pmids_list = file.read().splitlines() 
     
-    # 新しいPMIDリストを取得
+    # new pmids list
     years_list = [str(x) for x in range(1990, 2024)]  
     new_pmids_list = []
     for year in years_list:
@@ -29,7 +29,7 @@ def main():
             file.write(item + '\n')
 
 
-    # 更新するPMIDリストを取得
+    # pmids list to update
     set1 = set(new_pmids_list)
     set2 = set(last_pmids_list)
     update_pmid = list(set1.difference(set2))

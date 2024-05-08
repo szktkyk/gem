@@ -2,26 +2,14 @@ import sqlite3
 import csv
 import os
 
-# taxidlineage to the appropriate format
-input_filename = '../data/db_source/taxidlineage_pre.csv'
-output_filename = '../data/db_source/taxidlineage.csv'
-
-with open(input_filename, 'r') as infile, open(output_filename, 'w') as outfile:
-    for line in infile:
-        parts = line.split('|')
-        part1 = parts[0].strip("\t")
-        part2 = parts[1].strip("\t")
-        line = part1 + "," + part2 + '\n'
-        outfile.write(line)
-
-# import data to sqlite
+# repair names.dmp to names_repaired.csv.
 dbname = "../data/gem.db"
-target_table_name = "taxidlineage"
-import_table_name = "../data/db_source/taxidlineage.csv"
+target_table_name = "taxonomy"
+import_table_name = "../data/csv_gitignore/names_repaired.csv"
 is_create_table = True
 is_header_skip = True
 
-sql_script = """create table taxidlineage(id text, taxids text)"""
+sql_script = """create table taxonomy(tax_id text, tax_name text)"""
 
 class ImportSQLite():
     def __init__(self, dbname, target_table_name, import_data_name, is_create_table, is_header_skip=False, sql_create_table=None):
@@ -83,8 +71,7 @@ class ImportSQLite():
         column = self.pick_column_num(input_file)
         val_questions = ['?' for i in range(column)]
         cur.executemany("insert into {0} values ({1})".format(self.target_table_name, ','.join(val_questions)), input_file)
-        
-        
+
 
 if __name__ == '__main__':
 

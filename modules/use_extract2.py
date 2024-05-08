@@ -24,7 +24,8 @@ def use_extract2(id_for_extract:str, df):
         return [], [], [], [],[]
     print(f"extracted_words:{content}")
     # 出力されるtsvの真ん中の列の数字によってその単語が何に分類されるかを判断する
-    # -2だと生物種
+    # Judge the classification of the word based on the number in the middle column of the output tsv
+    # -2: species
     # マイナスがついていなければ遺伝子名
     # -25だと組織名
     # -26だと疾患名

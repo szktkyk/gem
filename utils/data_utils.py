@@ -8,7 +8,7 @@ import polars as pl
 def get_data_source():
     try:
         print("Creating DATA_SOURCE from arrow file")
-        data_source = pl.scan_ipc("test_data.arrow")
+        data_source = pl.scan_ipc("output.arrow")
         print(data_source)
         return data_source
     except FileNotFoundError:

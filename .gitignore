@@ -133,3 +133,5 @@ data/
 csv_gitignore/
 log/
 modules/check_results.py
+.vscode/
+output.arrow

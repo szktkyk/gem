@@ -1,27 +1,32 @@
 import sqlite3
 import csv
 import os
+import pandas as pd
 
-# taxidlineage to the appropriate format
-input_filename = '../data/db_source/taxidlineage_pre.csv'
-output_filename = '../data/db_source/taxidlineage.csv'
 
-with open(input_filename, 'r') as infile, open(output_filename, 'w') as outfile:
-    for line in infile:
-        parts = line.split('|')
-        part1 = parts[0].strip("\t")
-        part2 = parts[1].strip("\t")
-        line = part1 + "," + part2 + '\n'
-        outfile.write(line)
+# create csv from the binary mtree file
+with open('../data/csv_gitignore/mtrees2024.bin','rb') as f:
+    data = f.readlines()
+
+mesh_name = []
+mesh_number = []
+for a_line in data:
+    a_line = a_line.decode()
+    new_line = a_line.split(';')
+    mesh_name.append(new_line[0])
+    mesh_number.append(new_line[1].replace('\n',''))
+
+df = pd.DataFrame(list(zip(mesh_name,mesh_number)), columns =['mesh_term','mesh_number'])
+df.to_csv('../data/csv_gitignore/mtrees2024.csv')
 
 # import data to sqlite
 dbname = "../data/gem.db"
-target_table_name = "taxidlineage"
-import_table_name = "../data/db_source/taxidlineage.csv"
+target_table_name = "mtree"
+import_table_name = "../data/csv_gitignore/mtrees2024.csv"
 is_create_table = True
 is_header_skip = True
 
-sql_script = """create table taxidlineage(id text, taxids text)"""
+sql_script = """create table mtree( Integer, mesh_term text, mesh_number text)"""
 
 class ImportSQLite():
     def __init__(self, dbname, target_table_name, import_data_name, is_create_table, is_header_skip=False, sql_create_table=None):
@@ -83,8 +88,7 @@ class ImportSQLite():
         column = self.pick_column_num(input_file)
         val_questions = ['?' for i in range(column)]
         cur.executemany("insert into {0} values ({1})".format(self.target_table_name, ','.join(val_questions)), input_file)
-        
-        
+
 
 if __name__ == '__main__':
 

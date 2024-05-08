@@ -309,4 +309,5 @@ def visualize(filter_model,n_clicks):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, threaded=False)
+    # app.run_server(debug=True, threaded=False)
+    app.run_server(host='0.0.0.0', port=8000)

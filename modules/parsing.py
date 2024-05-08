@@ -25,41 +25,6 @@ def parse_bioproid(texts: str) -> list:
     return bioproid
 
 
-# def parse_addgene(texts: str, path: str) -> str or None:
-#     """
-#     Parameters:
-#     -------------
-#     texts:str
-#         texts to parse editing types
-
-#     path: str
-#         path to addgene.csv
-
-#     Returns:
-#     --------------
-#     vector_namelist: list
-#         addgeneID is extracted from Methods, and if it matches the dictionary, the vector name is put in the list.
-
-
-#     """
-#     df_csv = pl.read_csv(path, sep=",")
-#     addgeneid_pattern = re.compile("[0-9]{5,10}")
-#     addgeneids = re.findall(addgeneid_pattern, texts)
-#     addgeneids = list(set(addgeneids))
-#     vector_namelist = []
-#     for addgeneid in addgeneids:
-#         try:
-#             row = df_csv[df_csv["addgeneid"] == int(addgeneid)]
-#             vector_namelist.append(row["vectorname"].values[0])
-#         except:
-#             continue
-#     if vector_namelist != []:
-#         vectors = ",".join(vector_namelist)
-#     else:
-#         vectors = None
-#     return vectors
-
-
 def parse_geo(texts: str) -> list:
     """
     Parameters:
@@ -80,6 +45,7 @@ def parse_geo(texts: str) -> list:
     else:
         geoid = []
     return geoid
+
 
 def get_xml_from_pmcid(pmcid_str):
     """
@@ -103,6 +69,7 @@ def get_xml_from_pmcid(pmcid_str):
     tree = ET.fromstring(req.content)
     # tree_text = minidom.parseString(ET.tostring(tree)).toprettyxml(indent="    ")
     return tree
+
 
 def parse_section_pmc(tree: str, section: str) -> list:
     """
@@ -137,3 +104,38 @@ def parse_getool(texts:str):
             # print(parse_pattern[1].search(title))
             getools.append(parse_pattern[0])
     return getools
+
+
+# def parse_addgene(texts: str, path: str) -> str or None:
+#     """
+#     Parameters:
+#     -------------
+#     texts:str
+#         texts to parse editing types
+
+#     path: str
+#         path to addgene.csv
+
+#     Returns:
+#     --------------
+#     vector_namelist: list
+#         addgeneID is extracted from Methods, and if it matches the dictionary, the vector name is put in the list.
+
+
+#     """
+#     df_csv = pl.read_csv(path, sep=",")
+#     addgeneid_pattern = re.compile("[0-9]{5,10}")
+#     addgeneids = re.findall(addgeneid_pattern, texts)
+#     addgeneids = list(set(addgeneids))
+#     vector_namelist = []
+#     for addgeneid in addgeneids:
+#         try:
+#             row = df_csv[df_csv["addgeneid"] == int(addgeneid)]
+#             vector_namelist.append(row["vectorname"].values[0])
+#         except:
+#             continue
+#     if vector_namelist != []:
+#         vectors = ",".join(vector_namelist)
+#     else:
+#         vectors = None
+#     return vectors
