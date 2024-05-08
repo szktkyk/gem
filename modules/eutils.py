@@ -1,29 +1,9 @@
-import re
-import datetime
 import requests
 import xml.etree.ElementTree as ET
-import subprocess
-from urllib.request import Request, urlopen
-
-
-def get_yearlist(minyear:int):
-    """
-    Parameters:
-    --------
-    minyear: int
-
-    Returns:
-    --------
-    years_list: list
-        A list of year starting from minyear to 2023.
-    """
-    years_list = [str(x) for x in range(minyear, 2023)]
-    return years_list
-
 
 def call_esearch(query_str: str, mindate:int) -> ET.Element:
     """
-    10000件までしか取れないので、mindateを指定して、1年ずつPMIDを取得する
+    get pmids by each year (as 10000 items at most)
 
     Parameters:
     ------
@@ -57,8 +37,6 @@ def generate_chunked_id_list(id_list, max_len) -> list:
     """
     return [id_list[i : i + max_len] for i in range(0, len(id_list), max_len)]
 
-
-     
 def get_text_by_tree(treepath, element):
     """
     Parameters:
@@ -83,7 +61,6 @@ def get_text_by_tree(treepath, element):
     else:
         return ""
 
-
 def use_eutils(api_url):
     """
     function to use API
@@ -103,4 +80,3 @@ def use_eutils(api_url):
     req.raise_for_status()
     tree = ET.fromstring(req.content)
     return tree
-
