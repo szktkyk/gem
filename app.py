@@ -25,18 +25,6 @@ app = Dash(
     ])
 app.title = "gem"
 
-# google analytics tag
-ga_tag = html.Script("""
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DYY5ZMLGFE"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-DYY5ZMLGFE');
-</script>
-""")
 
 # 見た目の整理
 app.layout = dmc.MantineProvider(
