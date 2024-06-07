@@ -12,8 +12,8 @@ def main():
     df = pl.read_csv(config.PATH["pubdetails"])
     pmids_list = df["pmid"].to_list()
     print(f"The number of pmids: {len(pmids_list)}")
-    pmids_list = check_results.get_pmids_from_geneann()
-    print(f"The number of pmids from geneann: {len(pmids_list)}")
+    # pmids_list = check_results.get_pmids_from_geneann()
+    # print(f"The number of pmids from geneann: {len(pmids_list)}")
     
     list_of_chunked_pmids = eutils.generate_chunked_id_list(pmids_list, 100)
     extracted_genes = []
@@ -29,7 +29,7 @@ def main():
     field_name_disease = ["pmid","disease",]
     field_name_tissue = ["pmid","tissue",]
     with open(
-        f"./data/csv_gitignore/{config.date}_gene_annotations_5th.csv",
+        f"./data/csv_gitignore/{config.date}_gene_annotations.csv",
         "w",
     ) as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_name_gene)
@@ -37,7 +37,7 @@ def main():
         writer.writerows(extracted_genes)
 
     with open(
-        f"./data/csv_gitignore/{config.date}_disease_annotations_5th.csv",
+        f"./data/csv_gitignore/{config.date}_disease_annotations.csv",
         "w",
     ) as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_name_disease)
@@ -45,7 +45,7 @@ def main():
         writer.writerows(extracted_disease)
 
     with open(
-        f"./data/csv_gitignore/{config.date}_tissue_annotations_5th.csv",
+        f"./data/csv_gitignore/{config.date}_tissue_annotations.csv",
         "w",
     ) as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_name_tissue)

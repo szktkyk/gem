@@ -8,8 +8,8 @@ import ast
 # from nltk.stem import PorterStemmer
 # stemmer = PorterStemmer()
 
-check_results.check_duplicate()
-exit()
+# check_results.check_duplicate()
+# exit()
 
 con = sqlite3.connect("./data/gem.db")
 

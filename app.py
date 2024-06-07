@@ -25,6 +25,19 @@ app = Dash(
     ])
 app.title = "gem"
 
+# google analytics tag
+ga_tag = html.Script("""
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DYY5ZMLGFE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DYY5ZMLGFE');
+</script>
+""")
+
 # 見た目の整理
 app.layout = dmc.MantineProvider(
     theme={"colorScheme": "light"},
@@ -60,7 +73,7 @@ app.layout = dmc.MantineProvider(
                         children=[
                         # TODO: リンク先を設定する
                             dmc.Anchor("About", href="/assets/about.html", target="_blank", id="about-link", size="xl"),
-                            dmc.Anchor("API", href="http://127.0.0.1:8000/docs", target="_blank", id="howtouse-link", size="xl"),
+                            dmc.Anchor("API", href="/assets/api.html", target="_blank", id="api-link", size="xl"),
                             dmc.Anchor("News", href="/assets/news.html", target="_blank", id="news-link", size="xl"),
                             dmc.Anchor("Contact", href="https://bonohu.hiroshima-u.ac.jp/index_en.html",target="_blank", id="contact-link", size="xl"),
                         ]
@@ -77,38 +90,50 @@ app.layout = dmc.MantineProvider(
             ),
 
             # Select Columnsボタン
-            dmc.Menu(
-                id="columns-selection-menu",
-                clickOutsideEvents=False,
-                closeDelay=False,
-                closeOnClickOutside=False,
-                closeOnEscape=False,
-                closeOnItemClick=False,
-                styles={"dropdown": {"background-color": "#2d3038"}},
+            dmc.Group(
                 children=[
-                    dmc.MenuTarget(
-                        dmc.Button(
-                            "Select Columns",
-                            id="open-modal-bttn",
-                            variant="light",
-                            style={
-                                "border-color": "#000000",
-                                "color": "#000000",
-                                "margin-bottom": "1em",
-                            },
-                        ),
-                    ),
-                    dmc.MenuDropdown(
+                    dmc.Menu(
+                        id="columns-selection-menu",
+                        clickOutsideEvents=False,
+                        closeDelay=False,
+                        closeOnClickOutside=False,
+                        closeOnEscape=False,
+                        closeOnItemClick=False,
+                        styles={"dropdown": {"background-color": "#2d3038"}},
                         children=[
-                            dmc.MenuItem(
-                                style={
-                                    "padding": "0",
-                                },
-                                children=layout_utils.render_columns_modal(),
+                            dmc.MenuTarget(
+                                html.Button(
+                                    "Select Columns",
+                                    id="open-modal-bttn",
+                                    # variant="light",
+                                    style={
+                                        "border-color": "#000000",
+                                        "color": "#000000",
+                                        "margin-bottom": "0.5em",
+                                    },
+                                ),
+                            ),
+                            dmc.MenuDropdown(
+                                children=[
+                                    dmc.MenuItem(
+                                        style={
+                                            "padding": "0",
+                                        },
+                                        children=layout_utils.render_columns_modal(),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
+                    html.A(
+                        html.Button(
+                            "Refresh Table", 
+                            id="viz-bttn2", 
+                            style={"border-color": "#000000", "color": "#000000", "margin-bottom": "0.5em"}), 
+                            href="/"),
+                    dcc.Location(id='url', refresh=True),
                 ],
+                position="left",
             ),
 
             # テーブルのレイアウト
@@ -145,10 +170,9 @@ app.layout = dmc.MantineProvider(
             # 下記以下は色々と考える（まだ例をそのままコピペした状態）
             dmc.Group(
                 [
-                    dmc.Button(
+                    html.Button(
                         "Refresh Plots",
                         id="viz-bttn",
-                        variant="light",
                         style={
                             "border-color": "#000000",
                             "color": "#000000",
@@ -231,7 +255,11 @@ app.layout = dmc.MantineProvider(
                         )
                     ],
                     style={"padding-top": "2em", "padding-left":"0.5em"}  # 適宜スタイルを調整
-                )
+                ),
+            # google analytics tag
+            html.P(
+                children=[(ga_tag)]
+            )
             ]
     )
 )
@@ -286,6 +314,14 @@ def infinite_scroll(request, columnDefs):
         "rowCount": len(df),
     }, request["filterModel"]
 
+# テーブルのリフレッシュ（ページのリフレッシュ）
+@app.callback(
+    Output('interval', 'href'),
+    Input('viz-bttn2', 'n_clicks'),
+    prevent_initial_call=True,
+)
+def refresh_page(_):
+    return "/"
 
 @app.callback(
     Output("publication-getool-plot", "figure"),

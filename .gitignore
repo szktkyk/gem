@@ -136,3 +136,5 @@ modules/check_results.py
 .vscode/
 output.arrow
 cache/
+concat_json.py
+check_statistics.py
